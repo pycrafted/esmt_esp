@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import GSMResults from './GSMResults';
+import InfoBulle from '../common/InfoBulle';
 
 interface GSMFormValues {
   area: string;
@@ -127,6 +128,12 @@ const GSMForm: React.FC<{ onSubmit?: (values: GSMFormValues) => void }> = ({ onS
       <div>
         <label className="block font-medium flex items-center gap-2">
           Zone de couverture (km²)
+          <InfoBulle content={<>
+            <b>Définition :</b> {pedagogicHelp.area.short}<br/>
+            <b>Unité :</b> km²<br/>
+            <b>Exemple :</b> {pedagogicHelp.area.example}<br/>
+            <b>Impact :</b> {pedagogicHelp.area.why}
+          </>} />
           <button type="button" onClick={() => handleShowWhy('area')} className="text-blue-600 text-xs underline">Pourquoi ?</button>
         </label>
         <input
@@ -146,6 +153,12 @@ const GSMForm: React.FC<{ onSubmit?: (values: GSMFormValues) => void }> = ({ onS
       <div>
         <label className="block font-medium flex items-center gap-2">
           Densité de population (hab/km²)
+          <InfoBulle content={<>
+            <b>Définition :</b> {pedagogicHelp.density.short}<br/>
+            <b>Unité :</b> hab/km²<br/>
+            <b>Exemple :</b> {pedagogicHelp.density.example}<br/>
+            <b>Impact :</b> {pedagogicHelp.density.why}
+          </>} />
           <button type="button" onClick={() => handleShowWhy('density')} className="text-blue-600 text-xs underline">Pourquoi ?</button>
         </label>
         <input
@@ -165,6 +178,12 @@ const GSMForm: React.FC<{ onSubmit?: (values: GSMFormValues) => void }> = ({ onS
       <div>
         <label className="block font-medium flex items-center gap-2">
           Trafic par abonné (mErlang)
+          <InfoBulle content={<>
+            <b>Définition :</b> {pedagogicHelp.trafficPerUser.short}<br/>
+            <b>Unité :</b> mErlang<br/>
+            <b>Exemple :</b> {pedagogicHelp.trafficPerUser.example}<br/>
+            <b>Impact :</b> {pedagogicHelp.trafficPerUser.why}
+          </>} />
           <button type="button" onClick={() => handleShowWhy('trafficPerUser')} className="text-blue-600 text-xs underline">Pourquoi ?</button>
         </label>
         <input
@@ -184,6 +203,12 @@ const GSMForm: React.FC<{ onSubmit?: (values: GSMFormValues) => void }> = ({ onS
       <div>
         <label className="block font-medium flex items-center gap-2">
           Taux de pénétration (%)
+          <InfoBulle content={<>
+            <b>Définition :</b> {pedagogicHelp.penetration.short}<br/>
+            <b>Unité :</b> %<br/>
+            <b>Exemple :</b> {pedagogicHelp.penetration.example}<br/>
+            <b>Impact :</b> {pedagogicHelp.penetration.why}
+          </>} />
           <button type="button" onClick={() => handleShowWhy('penetration')} className="text-blue-600 text-xs underline">Pourquoi ?</button>
         </label>
         <input
@@ -203,6 +228,12 @@ const GSMForm: React.FC<{ onSubmit?: (values: GSMFormValues) => void }> = ({ onS
       <div>
         <label className="block font-medium flex items-center gap-2">
           Facteur d'activité
+          <InfoBulle content={<>
+            <b>Définition :</b> {pedagogicHelp.activity.short}<br/>
+            <b>Unité :</b> (sans unité)<br/>
+            <b>Exemple :</b> {pedagogicHelp.activity.example}<br/>
+            <b>Impact :</b> {pedagogicHelp.activity.why}
+          </>} />
           <button type="button" onClick={() => handleShowWhy('activity')} className="text-blue-600 text-xs underline">Pourquoi ?</button>
         </label>
         <input

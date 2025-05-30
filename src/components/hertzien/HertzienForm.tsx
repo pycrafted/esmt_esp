@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import HertzienResults from './HertzienResults';
+import InfoBulle from '../common/InfoBulle';
 
 interface HertzienFormValues {
   frequency: string;
@@ -147,6 +148,12 @@ const HertzienForm: React.FC<{ onSubmit?: (values: HertzienFormValues) => void }
       <div>
         <label className="block font-medium flex items-center gap-2">
           Fréquence (GHz)
+          <InfoBulle content={<>
+            <b>Définition :</b> {pedagogicHelp.frequency.short}<br/>
+            <b>Unité :</b> GHz<br/>
+            <b>Exemple :</b> {pedagogicHelp.frequency.example}<br/>
+            <b>Impact :</b> {pedagogicHelp.frequency.why}
+          </>} />
           <button type="button" onClick={() => handleShowWhy('frequency')} className="text-blue-600 text-xs underline">Pourquoi ?</button>
         </label>
         <input
@@ -166,6 +173,12 @@ const HertzienForm: React.FC<{ onSubmit?: (values: HertzienFormValues) => void }
       <div>
         <label className="block font-medium flex items-center gap-2">
           Distance (km)
+          <InfoBulle content={<>
+            <b>Définition :</b> {pedagogicHelp.distance.short}<br/>
+            <b>Unité :</b> km<br/>
+            <b>Exemple :</b> {pedagogicHelp.distance.example}<br/>
+            <b>Impact :</b> {pedagogicHelp.distance.why}
+          </>} />
           <button type="button" onClick={() => handleShowWhy('distance')} className="text-blue-600 text-xs underline">Pourquoi ?</button>
         </label>
         <input
@@ -185,6 +198,12 @@ const HertzienForm: React.FC<{ onSubmit?: (values: HertzienFormValues) => void }
       <div>
         <label className="block font-medium flex items-center gap-2">
           Puissance émission (dBm)
+          <InfoBulle content={<>
+            <b>Définition :</b> {pedagogicHelp.power.short}<br/>
+            <b>Unité :</b> dBm<br/>
+            <b>Exemple :</b> {pedagogicHelp.power.example}<br/>
+            <b>Impact :</b> {pedagogicHelp.power.why}
+          </>} />
           <button type="button" onClick={() => handleShowWhy('power')} className="text-blue-600 text-xs underline">Pourquoi ?</button>
         </label>
         <input
@@ -204,6 +223,12 @@ const HertzienForm: React.FC<{ onSubmit?: (values: HertzienFormValues) => void }
       <div>
         <label className="block font-medium flex items-center gap-2">
           Gain antenne émission (dBi)
+          <InfoBulle content={<>
+            <b>Définition :</b> {pedagogicHelp.gainTx.short}<br/>
+            <b>Unité :</b> dBi<br/>
+            <b>Exemple :</b> {pedagogicHelp.gainTx.example}<br/>
+            <b>Impact :</b> {pedagogicHelp.gainTx.why}
+          </>} />
           <button type="button" onClick={() => handleShowWhy('gainTx')} className="text-blue-600 text-xs underline">Pourquoi ?</button>
         </label>
         <input
@@ -223,6 +248,12 @@ const HertzienForm: React.FC<{ onSubmit?: (values: HertzienFormValues) => void }
       <div>
         <label className="block font-medium flex items-center gap-2">
           Gain antenne réception (dBi)
+          <InfoBulle content={<>
+            <b>Définition :</b> {pedagogicHelp.gainRx.short}<br/>
+            <b>Unité :</b> dBi<br/>
+            <b>Exemple :</b> {pedagogicHelp.gainRx.example}<br/>
+            <b>Impact :</b> {pedagogicHelp.gainRx.why}
+          </>} />
           <button type="button" onClick={() => handleShowWhy('gainRx')} className="text-blue-600 text-xs underline">Pourquoi ?</button>
         </label>
         <input
@@ -242,6 +273,12 @@ const HertzienForm: React.FC<{ onSubmit?: (values: HertzienFormValues) => void }
       <div>
         <label className="block font-medium flex items-center gap-2">
           Pertes diverses (dB)
+          <InfoBulle content={<>
+            <b>Définition :</b> {pedagogicHelp.losses.short}<br/>
+            <b>Unité :</b> dB<br/>
+            <b>Exemple :</b> {pedagogicHelp.losses.example}<br/>
+            <b>Impact :</b> {pedagogicHelp.losses.why}
+          </>} />
           <button type="button" onClick={() => handleShowWhy('losses')} className="text-blue-600 text-xs underline">Pourquoi ?</button>
         </label>
         <input
@@ -261,6 +298,12 @@ const HertzienForm: React.FC<{ onSubmit?: (values: HertzienFormValues) => void }
       <div>
         <label className="block font-medium flex items-center gap-2">
           Seuil de réception (dBm)
+          <InfoBulle content={<>
+            <b>Définition :</b> {pedagogicHelp.threshold.short}<br/>
+            <b>Unité :</b> dBm<br/>
+            <b>Exemple :</b> {pedagogicHelp.threshold.example}<br/>
+            <b>Impact :</b> {pedagogicHelp.threshold.why}
+          </>} />
           <button type="button" onClick={() => handleShowWhy('threshold')} className="text-blue-600 text-xs underline">Pourquoi ?</button>
         </label>
         <input

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import UMTSResults from './UMTSResults';
+import InfoBulle from '../common/InfoBulle';
 
 interface UMTSFormValues {
   area: string;
@@ -139,6 +140,12 @@ const UMTSForm: React.FC<{ onSubmit?: (values: UMTSFormValues) => void }> = ({ o
       <div>
         <label className="block font-medium flex items-center gap-2">
           Zone de couverture (km²)
+          <InfoBulle content={<>
+            <b>Définition :</b> {pedagogicHelp.area.short}<br/>
+            <b>Unité :</b> km²<br/>
+            <b>Exemple :</b> {pedagogicHelp.area.example}<br/>
+            <b>Impact :</b> {pedagogicHelp.area.why}
+          </>} />
           <button type="button" onClick={() => handleShowWhy('area')} className="text-blue-600 text-xs underline">Pourquoi ?</button>
         </label>
         <input
@@ -158,6 +165,12 @@ const UMTSForm: React.FC<{ onSubmit?: (values: UMTSFormValues) => void }> = ({ o
       <div>
         <label className="block font-medium flex items-center gap-2">
           Nombre d'utilisateurs
+          <InfoBulle content={<>
+            <b>Définition :</b> {pedagogicHelp.users.short}<br/>
+            <b>Unité :</b> nombre<br/>
+            <b>Exemple :</b> {pedagogicHelp.users.example}<br/>
+            <b>Impact :</b> {pedagogicHelp.users.why}
+          </>} />
           <button type="button" onClick={() => handleShowWhy('users')} className="text-blue-600 text-xs underline">Pourquoi ?</button>
         </label>
         <input
@@ -177,6 +190,12 @@ const UMTSForm: React.FC<{ onSubmit?: (values: UMTSFormValues) => void }> = ({ o
       <div>
         <label className="block font-medium flex items-center gap-2">
           Débit voix par utilisateur (kbps)
+          <InfoBulle content={<>
+            <b>Définition :</b> {pedagogicHelp.voice.short}<br/>
+            <b>Unité :</b> kbps<br/>
+            <b>Exemple :</b> {pedagogicHelp.voice.example}<br/>
+            <b>Impact :</b> {pedagogicHelp.voice.why}
+          </>} />
           <button type="button" onClick={() => handleShowWhy('voice')} className="text-blue-600 text-xs underline">Pourquoi ?</button>
         </label>
         <input
@@ -196,6 +215,12 @@ const UMTSForm: React.FC<{ onSubmit?: (values: UMTSFormValues) => void }> = ({ o
       <div>
         <label className="block font-medium flex items-center gap-2">
           Débit data par utilisateur (kbps)
+          <InfoBulle content={<>
+            <b>Définition :</b> {pedagogicHelp.data.short}<br/>
+            <b>Unité :</b> kbps<br/>
+            <b>Exemple :</b> {pedagogicHelp.data.example}<br/>
+            <b>Impact :</b> {pedagogicHelp.data.why}
+          </>} />
           <button type="button" onClick={() => handleShowWhy('data')} className="text-blue-600 text-xs underline">Pourquoi ?</button>
         </label>
         <input
@@ -215,6 +240,12 @@ const UMTSForm: React.FC<{ onSubmit?: (values: UMTSFormValues) => void }> = ({ o
       <div>
         <label className="block font-medium flex items-center gap-2">
           Débit vidéo par utilisateur (kbps)
+          <InfoBulle content={<>
+            <b>Définition :</b> {pedagogicHelp.video.short}<br/>
+            <b>Unité :</b> kbps<br/>
+            <b>Exemple :</b> {pedagogicHelp.video.example}<br/>
+            <b>Impact :</b> {pedagogicHelp.video.why}
+          </>} />
           <button type="button" onClick={() => handleShowWhy('video')} className="text-blue-600 text-xs underline">Pourquoi ?</button>
         </label>
         <input
@@ -234,6 +265,12 @@ const UMTSForm: React.FC<{ onSubmit?: (values: UMTSFormValues) => void }> = ({ o
       <div>
         <label className="block font-medium flex items-center gap-2">
           Facteur de charge (%)
+          <InfoBulle content={<>
+            <b>Définition :</b> {pedagogicHelp.load.short}<br/>
+            <b>Unité :</b> %<br/>
+            <b>Exemple :</b> {pedagogicHelp.load.example}<br/>
+            <b>Impact :</b> {pedagogicHelp.load.why}
+          </>} />
           <button type="button" onClick={() => handleShowWhy('load')} className="text-blue-600 text-xs underline">Pourquoi ?</button>
         </label>
         <input

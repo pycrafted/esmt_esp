@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import OptiqueResults from './OptiqueResults';
+import InfoBulle from '../common/InfoBulle';
 
 interface OptiqueFormValues {
   length: string;
@@ -139,6 +140,12 @@ const OptiqueForm: React.FC<{ onSubmit?: (values: OptiqueFormValues) => void }> 
       <div>
         <label className="block font-medium flex items-center gap-2">
           Longueur de la liaison (km)
+          <InfoBulle content={<>
+            <b>Définition :</b> {pedagogicHelp.length.short}<br/>
+            <b>Unité :</b> km<br/>
+            <b>Exemple :</b> {pedagogicHelp.length.example}<br/>
+            <b>Impact :</b> {pedagogicHelp.length.why}
+          </>} />
           <button type="button" onClick={() => handleShowWhy('length')} className="text-blue-600 text-xs underline">Pourquoi ?</button>
         </label>
         <input
@@ -158,6 +165,12 @@ const OptiqueForm: React.FC<{ onSubmit?: (values: OptiqueFormValues) => void }> 
       <div>
         <label className="block font-medium flex items-center gap-2">
           Atténuation fibre (dB/km)
+          <InfoBulle content={<>
+            <b>Définition :</b> {pedagogicHelp.attenuation.short}<br/>
+            <b>Unité :</b> dB/km<br/>
+            <b>Exemple :</b> {pedagogicHelp.attenuation.example}<br/>
+            <b>Impact :</b> {pedagogicHelp.attenuation.why}
+          </>} />
           <button type="button" onClick={() => handleShowWhy('attenuation')} className="text-blue-600 text-xs underline">Pourquoi ?</button>
         </label>
         <input
@@ -177,6 +190,12 @@ const OptiqueForm: React.FC<{ onSubmit?: (values: OptiqueFormValues) => void }> 
       <div>
         <label className="block font-medium flex items-center gap-2">
           Nombre d'épissures
+          <InfoBulle content={<>
+            <b>Définition :</b> {pedagogicHelp.splices.short}<br/>
+            <b>Unité :</b> nombre<br/>
+            <b>Exemple :</b> {pedagogicHelp.splices.example}<br/>
+            <b>Impact :</b> {pedagogicHelp.splices.why}
+          </>} />
           <button type="button" onClick={() => handleShowWhy('splices')} className="text-blue-600 text-xs underline">Pourquoi ?</button>
         </label>
         <input
@@ -196,6 +215,12 @@ const OptiqueForm: React.FC<{ onSubmit?: (values: OptiqueFormValues) => void }> 
       <div>
         <label className="block font-medium flex items-center gap-2">
           Nombre de connecteurs
+          <InfoBulle content={<>
+            <b>Définition :</b> {pedagogicHelp.connectors.short}<br/>
+            <b>Unité :</b> nombre<br/>
+            <b>Exemple :</b> {pedagogicHelp.connectors.example}<br/>
+            <b>Impact :</b> {pedagogicHelp.connectors.why}
+          </>} />
           <button type="button" onClick={() => handleShowWhy('connectors')} className="text-blue-600 text-xs underline">Pourquoi ?</button>
         </label>
         <input
@@ -215,6 +240,12 @@ const OptiqueForm: React.FC<{ onSubmit?: (values: OptiqueFormValues) => void }> 
       <div>
         <label className="block font-medium flex items-center gap-2">
           Pertes diverses (dB)
+          <InfoBulle content={<>
+            <b>Définition :</b> {pedagogicHelp.losses.short}<br/>
+            <b>Unité :</b> dB<br/>
+            <b>Exemple :</b> {pedagogicHelp.losses.example}<br/>
+            <b>Impact :</b> {pedagogicHelp.losses.why}
+          </>} />
           <button type="button" onClick={() => handleShowWhy('losses')} className="text-blue-600 text-xs underline">Pourquoi ?</button>
         </label>
         <input
@@ -234,6 +265,12 @@ const OptiqueForm: React.FC<{ onSubmit?: (values: OptiqueFormValues) => void }> 
       <div>
         <label className="block font-medium flex items-center gap-2">
           Puissance émetteur (dBm)
+          <InfoBulle content={<>
+            <b>Définition :</b> {pedagogicHelp.power.short}<br/>
+            <b>Unité :</b> dBm<br/>
+            <b>Exemple :</b> {pedagogicHelp.power.example}<br/>
+            <b>Impact :</b> {pedagogicHelp.power.why}
+          </>} />
           <button type="button" onClick={() => handleShowWhy('power')} className="text-blue-600 text-xs underline">Pourquoi ?</button>
         </label>
         <input
