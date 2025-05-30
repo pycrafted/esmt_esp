@@ -19,13 +19,89 @@ const initialValues: UMTSFormValues = {
   load: '',
 };
 
+const pedagogicHelp = {
+  area: {
+    short: "Zone totale à couvrir (en km²).",
+    example: "Ex : 2 km² (quartier), 50 km² (ville)",
+    why: "La taille de la zone influence le nombre de cellules nécessaires."
+  },
+  users: {
+    short: "Nombre total d'utilisateurs à desservir.",
+    example: "Ex : 500 (petite zone), 10000 (grande ville)",
+    why: "Permet de dimensionner la capacité du réseau."
+  },
+  voice: {
+    short: "Débit voix par utilisateur (en kbps).",
+    example: "Ex : 12.2 kbps (AMR), 8 kbps (codec bas débit)",
+    why: "Le débit voix impacte la bande passante nécessaire."
+  },
+  data: {
+    short: "Débit data par utilisateur (en kbps).",
+    example: "Ex : 64 kbps (browsing), 384 kbps (3G max)",
+    why: "Le débit data détermine la capacité requise pour l'accès Internet."
+  },
+  video: {
+    short: "Débit vidéo par utilisateur (en kbps).",
+    example: "Ex : 128 kbps (basse qualité), 512 kbps (bonne qualité)",
+    why: "Le débit vidéo est important pour les services multimédias."
+  },
+  load: {
+    short: "Facteur de charge du réseau (en %).",
+    example: "Ex : 60% (valeur courante)",
+    why: "Permet de ne pas saturer le réseau et d'assurer la qualité de service."
+  }
+};
+
 const UMTSForm: React.FC<{ onSubmit?: (values: UMTSFormValues) => void }> = ({ onSubmit }) => {
   const [values, setValues] = useState(initialValues);
   const [errors, setErrors] = useState<Partial<UMTSFormValues>>({});
   const [showResults, setShowResults] = useState(false);
+  const [showWhy, setShowWhy] = useState<{ [k: string]: boolean }>({});
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setValues({ ...values, [e.target.name]: e.target.value });
+  };
+
+  const handleShowWhy = (field: string) => {
+    setShowWhy((prev) => ({ ...prev, [field]: !prev[field] }));
+  };
+
+  const getDynamicComment = (field: keyof UMTSFormValues) => {
+    const v = values[field];
+    if (!v) return pedagogicHelp[field].short + ' ' + pedagogicHelp[field].example;
+    const num = Number(v);
+    if (isNaN(num)) return "Veuillez entrer une valeur numérique.";
+    if (field === 'area') {
+      if (num < 1) return "Petite zone, peu de cellules nécessaires.";
+      if (num > 100) return "Grande zone, prévoir plus de sites.";
+      return "Zone typique pour une ville ou un campus.";
+    }
+    if (field === 'users') {
+      if (num < 100) return "Peu d'utilisateurs, faible trafic.";
+      if (num > 10000) return "Beaucoup d'utilisateurs, attention à la capacité.";
+      return "Nombre d'utilisateurs courant.";
+    }
+    if (field === 'voice') {
+      if (num < 8) return "Débit voix très faible, qualité dégradée.";
+      if (num > 16) return "Débit voix élevé, bonne qualité mais plus de ressources nécessaires.";
+      return "Débit voix standard (AMR).";
+    }
+    if (field === 'data') {
+      if (num < 32) return "Débit data faible, usage basique.";
+      if (num > 384) return "Débit data élevé, attention à la capacité.";
+      return "Débit data courant pour 3G.";
+    }
+    if (field === 'video') {
+      if (num < 64) return "Débit vidéo faible, qualité basse.";
+      if (num > 512) return "Débit vidéo élevé, attention à la bande passante.";
+      return "Débit vidéo typique pour mobile.";
+    }
+    if (field === 'load') {
+      if (num < 40) return "Facteur de charge faible, réseau sous-utilisé.";
+      if (num > 80) return "Facteur de charge élevé, risque de saturation.";
+      return "Facteur de charge courant (60%).";
+    }
+    return '';
   };
 
   const validate = () => {
@@ -51,8 +127,12 @@ const UMTSForm: React.FC<{ onSubmit?: (values: UMTSFormValues) => void }> = ({ o
   return (
     <form onSubmit={handleSubmit} className="max-w-lg mx-auto bg-white p-6 rounded shadow space-y-4">
       <h2 className="text-xl font-bold mb-4">Paramètres UMTS</h2>
+      {/* Zone de couverture */}
       <div>
-        <label className="block font-medium">Zone de couverture (km²)</label>
+        <label className="block font-medium flex items-center gap-2">
+          Zone de couverture (km²)
+          <button type="button" onClick={() => handleShowWhy('area')} className="text-blue-600 text-xs underline">Pourquoi ?</button>
+        </label>
         <input
           type="number"
           name="area"
@@ -60,10 +140,18 @@ const UMTSForm: React.FC<{ onSubmit?: (values: UMTSFormValues) => void }> = ({ o
           onChange={handleChange}
           className="mt-1 w-full border rounded px-3 py-2"
         />
+        {showWhy['area'] && (
+          <div className="text-xs text-blue-700 mb-1">{pedagogicHelp.area.why}</div>
+        )}
+        <div className="text-xs text-gray-600 mt-1">{getDynamicComment('area')}</div>
         {errors.area && <span className="text-red-600 text-sm">{errors.area}</span>}
       </div>
+      {/* Nombre d'utilisateurs */}
       <div>
-        <label className="block font-medium">Nombre d'utilisateurs</label>
+        <label className="block font-medium flex items-center gap-2">
+          Nombre d'utilisateurs
+          <button type="button" onClick={() => handleShowWhy('users')} className="text-blue-600 text-xs underline">Pourquoi ?</button>
+        </label>
         <input
           type="number"
           name="users"
@@ -71,10 +159,18 @@ const UMTSForm: React.FC<{ onSubmit?: (values: UMTSFormValues) => void }> = ({ o
           onChange={handleChange}
           className="mt-1 w-full border rounded px-3 py-2"
         />
+        {showWhy['users'] && (
+          <div className="text-xs text-blue-700 mb-1">{pedagogicHelp.users.why}</div>
+        )}
+        <div className="text-xs text-gray-600 mt-1">{getDynamicComment('users')}</div>
         {errors.users && <span className="text-red-600 text-sm">{errors.users}</span>}
       </div>
+      {/* Débit voix */}
       <div>
-        <label className="block font-medium">Débit voix par utilisateur (kbps)</label>
+        <label className="block font-medium flex items-center gap-2">
+          Débit voix par utilisateur (kbps)
+          <button type="button" onClick={() => handleShowWhy('voice')} className="text-blue-600 text-xs underline">Pourquoi ?</button>
+        </label>
         <input
           type="number"
           name="voice"
@@ -82,10 +178,18 @@ const UMTSForm: React.FC<{ onSubmit?: (values: UMTSFormValues) => void }> = ({ o
           onChange={handleChange}
           className="mt-1 w-full border rounded px-3 py-2"
         />
+        {showWhy['voice'] && (
+          <div className="text-xs text-blue-700 mb-1">{pedagogicHelp.voice.why}</div>
+        )}
+        <div className="text-xs text-gray-600 mt-1">{getDynamicComment('voice')}</div>
         {errors.voice && <span className="text-red-600 text-sm">{errors.voice}</span>}
       </div>
+      {/* Débit data */}
       <div>
-        <label className="block font-medium">Débit data par utilisateur (kbps)</label>
+        <label className="block font-medium flex items-center gap-2">
+          Débit data par utilisateur (kbps)
+          <button type="button" onClick={() => handleShowWhy('data')} className="text-blue-600 text-xs underline">Pourquoi ?</button>
+        </label>
         <input
           type="number"
           name="data"
@@ -93,10 +197,18 @@ const UMTSForm: React.FC<{ onSubmit?: (values: UMTSFormValues) => void }> = ({ o
           onChange={handleChange}
           className="mt-1 w-full border rounded px-3 py-2"
         />
+        {showWhy['data'] && (
+          <div className="text-xs text-blue-700 mb-1">{pedagogicHelp.data.why}</div>
+        )}
+        <div className="text-xs text-gray-600 mt-1">{getDynamicComment('data')}</div>
         {errors.data && <span className="text-red-600 text-sm">{errors.data}</span>}
       </div>
+      {/* Débit vidéo */}
       <div>
-        <label className="block font-medium">Débit vidéo par utilisateur (kbps)</label>
+        <label className="block font-medium flex items-center gap-2">
+          Débit vidéo par utilisateur (kbps)
+          <button type="button" onClick={() => handleShowWhy('video')} className="text-blue-600 text-xs underline">Pourquoi ?</button>
+        </label>
         <input
           type="number"
           name="video"
@@ -104,10 +216,18 @@ const UMTSForm: React.FC<{ onSubmit?: (values: UMTSFormValues) => void }> = ({ o
           onChange={handleChange}
           className="mt-1 w-full border rounded px-3 py-2"
         />
+        {showWhy['video'] && (
+          <div className="text-xs text-blue-700 mb-1">{pedagogicHelp.video.why}</div>
+        )}
+        <div className="text-xs text-gray-600 mt-1">{getDynamicComment('video')}</div>
         {errors.video && <span className="text-red-600 text-sm">{errors.video}</span>}
       </div>
+      {/* Facteur de charge */}
       <div>
-        <label className="block font-medium">Facteur de charge (%)</label>
+        <label className="block font-medium flex items-center gap-2">
+          Facteur de charge (%)
+          <button type="button" onClick={() => handleShowWhy('load')} className="text-blue-600 text-xs underline">Pourquoi ?</button>
+        </label>
         <input
           type="number"
           name="load"
@@ -115,6 +235,10 @@ const UMTSForm: React.FC<{ onSubmit?: (values: UMTSFormValues) => void }> = ({ o
           onChange={handleChange}
           className="mt-1 w-full border rounded px-3 py-2"
         />
+        {showWhy['load'] && (
+          <div className="text-xs text-blue-700 mb-1">{pedagogicHelp.load.why}</div>
+        )}
+        <div className="text-xs text-gray-600 mt-1">{getDynamicComment('load')}</div>
         {errors.load && <span className="text-red-600 text-sm">{errors.load}</span>}
       </div>
       <button type="submit" className="bg-blue-700 text-white px-4 py-2 rounded hover:bg-blue-800">Calculer</button>
