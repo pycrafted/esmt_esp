@@ -1,5 +1,7 @@
 import React from 'react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import jsPDF from 'jspdf';
+import autoTable from 'jspdf-autotable';
 
 interface GSMResultsProps {
   area: number;
@@ -23,6 +25,22 @@ const GSMResults: React.FC<GSMResultsProps> = ({ area, density, trafficPerUser, 
     { name: 'Zone', value: area },
     { name: 'Sites BTS', value: nbSites },
   ];
+
+  const handleExportPDF = () => {
+    const doc = new jsPDF();
+    doc.text('Résultats du dimensionnement GSM', 14, 16);
+    autoTable(doc, {
+      startY: 24,
+      head: [['Paramètre', 'Valeur']],
+      body: [
+        ["Nombre d'abonnés", nbAbonnes.toLocaleString(undefined, { maximumFractionDigits: 0 })],
+        ['Trafic total (Erlangs)', traficTotal.toLocaleString(undefined, { maximumFractionDigits: 2 })],
+        ['Nombre de TRX', nbTRX],
+        ['Nombre de sites BTS', nbSites],
+      ],
+    });
+    doc.save('resultats_gsm.pdf');
+  };
 
   return (
     <div className="mt-8">
@@ -63,6 +81,12 @@ const GSMResults: React.FC<GSMResultsProps> = ({ area, density, trafficPerUser, 
           </BarChart>
         </ResponsiveContainer>
       </div>
+      <button
+        onClick={handleExportPDF}
+        className="mt-4 bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700"
+      >
+        Exporter en PDF
+      </button>
     </div>
   );
 };
