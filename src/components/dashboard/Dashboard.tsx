@@ -1,5 +1,7 @@
 import React from 'react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
+import jsPDF from 'jspdf';
+import autoTable from 'jspdf-autotable';
 
 // Données fictives pour le dashboard
 const stats = [
@@ -94,6 +96,79 @@ const Dashboard: React.FC = () => {
       }
     };
     reader.readAsText(file);
+  }
+
+  function exportPDFReport() {
+    const doc = new jsPDF();
+    doc.text('Rapport de dimensionnement Télécoms', 14, 16);
+    let y = 24;
+
+    // GSM
+    const gsm = getGsmHistory()[0];
+    if (gsm) {
+      doc.text('GSM', 14, y);
+      autoTable(doc, {
+        startY: y + 2,
+        head: [['Abonnés', 'Sites', 'TRX', 'Trafic (Erlangs)']],
+        body: [[
+          gsm.nbAbonnes,
+          gsm.nbSites,
+          gsm.nbTRX,
+          gsm.traficTotal
+        ]],
+      });
+      y = (doc as any).lastAutoTable.finalY + 8;
+    }
+
+    // Hertzien
+    const hertzien = getHertzienHistory()[0];
+    if (hertzien) {
+      doc.text('Hertzien', 14, y);
+      autoTable(doc, {
+        startY: y + 2,
+        head: [['Affaiblissement (dB)', 'Bilan (dB)', 'Marge (dB)']],
+        body: [[
+          hertzien.affaiblissement,
+          hertzien.bilan,
+          hertzien.marge
+        ]],
+      });
+      y = (doc as any).lastAutoTable.finalY + 8;
+    }
+
+    // Optique
+    const optique = getOptiqueHistory()[0];
+    if (optique) {
+      doc.text('Optique', 14, y);
+      autoTable(doc, {
+        startY: y + 2,
+        head: [['Att. fibre (dB)', 'Pertes totales (dB)', 'Bilan (dBm)']],
+        body: [[
+          optique.attFibre,
+          optique.pertesTotales,
+          optique.bilan
+        ]],
+      });
+      y = (doc as any).lastAutoTable.finalY + 8;
+    }
+
+    // UMTS
+    const umts = getUmtsHistory()[0];
+    if (umts) {
+      doc.text('UMTS', 14, y);
+      autoTable(doc, {
+        startY: y + 2,
+        head: [['Débit total (kbps)', 'Cellules', 'NodeB']],
+        body: [[
+          umts.debitTotal,
+          umts.nbCellules,
+          umts.nbNodeB
+        ]],
+      });
+      y = (doc as any).lastAutoTable.finalY + 8;
+    }
+
+    doc.save('rapport_dimensionnement_telecoms.pdf');
   }
 
   return (
@@ -244,6 +319,12 @@ const Dashboard: React.FC = () => {
           className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 shadow"
         >
           Importer JSON
+        </button>
+        <button
+          onClick={exportPDFReport}
+          className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 shadow"
+        >
+          Exporter rapport PDF
         </button>
         <input
           type="file"
