@@ -42,6 +42,21 @@ const GSMResults: React.FC<GSMResultsProps> = ({ area, density, trafficPerUser, 
     doc.save('resultats_gsm.pdf');
   };
 
+  const handleSave = () => {
+    const entry = {
+      date: new Date().toISOString(),
+      nbAbonnes,
+      traficTotal,
+      nbTRX,
+      nbSites,
+      params: { area, density, trafficPerUser, penetration, activity },
+    };
+    const history = JSON.parse(localStorage.getItem('gsm_history') || '[]');
+    history.unshift(entry);
+    localStorage.setItem('gsm_history', JSON.stringify(history.slice(0, 10)));
+    alert('Résultat GSM sauvegardé !');
+  };
+
   return (
     <div className="mt-8">
       <h3 className="text-lg font-semibold mb-4">Résultats du dimensionnement GSM</h3>
@@ -86,6 +101,12 @@ const GSMResults: React.FC<GSMResultsProps> = ({ area, density, trafficPerUser, 
         className="mt-4 bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700"
       >
         Exporter en PDF
+      </button>
+      <button
+        onClick={handleSave}
+        className="mt-4 bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 ml-2"
+      >
+        Sauvegarder
       </button>
     </div>
   );
