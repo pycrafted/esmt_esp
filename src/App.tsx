@@ -1,0 +1,27 @@
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import Layout from './components/common/Layout';
+import './App.css';
+
+const Dashboard = () => <div>Bienvenue sur le Dashboard</div>;
+const GSM = () => <div>Module GSM (à implémenter)</div>;
+const UMTS = () => <div>Module UMTS (à implémenter)</div>;
+const Hertzien = () => <div>Module Bilan Hertzien (à implémenter)</div>;
+const Optique = () => <div>Module Bilan Optique (à implémenter)</div>;
+
+function App() {
+  return (
+    <Router>
+      <Layout>
+        <Routes>
+          <Route path="/" element={<Dashboard />} />
+          <Route path="/gsm" element={<GSM />} />
+          <Route path="/umts" element={<UMTS />} />
+          <Route path="/hertzien" element={<Hertzien />} />
+          <Route path="/optique" element={<Optique />} />
+        </Routes>
+      </Layout>
+    </Router>
+  );
+}
+
+export default App;
