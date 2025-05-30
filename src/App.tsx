@@ -3,11 +3,12 @@ import Layout from './components/common/Layout';
 import GSMForm from './components/gsm/GSMForm';
 import HertzienForm from './components/hertzien/HertzienForm';
 import OptiqueForm from './components/optique/OptiqueForm';
+import UMTSForm from './components/umts/UMTSForm';
 import './App.css';
 
 const Dashboard = () => <div>Bienvenue sur le Dashboard</div>;
 const GSM = () => <GSMForm />;
-const UMTS = () => <div>Module UMTS (à implémenter)</div>;
+const UMTS = () => <UMTSForm />;
 const Hertzien = () => <HertzienForm />;
 const Optique = () => <OptiqueForm />;
 
