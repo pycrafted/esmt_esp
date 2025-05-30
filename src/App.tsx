@@ -1,9 +1,10 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Layout from './components/common/Layout';
+import GSMForm from './components/gsm/GSMForm';
 import './App.css';
 
 const Dashboard = () => <div>Bienvenue sur le Dashboard</div>;
-const GSM = () => <div>Module GSM (à implémenter)</div>;
+const GSM = () => <GSMForm />;
 const UMTS = () => <div>Module UMTS (à implémenter)</div>;
 const Hertzien = () => <div>Module Bilan Hertzien (à implémenter)</div>;
 const Optique = () => <div>Module Bilan Optique (à implémenter)</div>;
