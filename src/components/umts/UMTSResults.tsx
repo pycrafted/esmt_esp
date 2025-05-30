@@ -29,6 +29,24 @@ const UMTSResults: React.FC<UMTSResultsProps> = ({ area, users, voice, data, vid
     recommandation = "Attention : le nombre de NodeB est supérieur à la zone, vérifiez les paramètres.";
   }
 
+  const handleSave = () => {
+    const entry = {
+      date: new Date().toISOString(),
+      debitVoix,
+      debitData,
+      debitVideo,
+      debitTotal,
+      capaciteUtileCellule,
+      nbCellules,
+      nbNodeB,
+      params: { area, users, voice, data, video, load },
+    };
+    const history = JSON.parse(localStorage.getItem('umts_history') || '[]');
+    history.unshift(entry);
+    localStorage.setItem('umts_history', JSON.stringify(history.slice(0, 10)));
+    alert('Résultat UMTS sauvegardé !');
+  };
+
   return (
     <div className="mt-8">
       <h3 className="text-lg font-semibold mb-4">Résultats du dimensionnement UMTS</h3>
@@ -67,6 +85,12 @@ const UMTSResults: React.FC<UMTSResultsProps> = ({ area, users, voice, data, vid
       <div className="mt-4 p-3 rounded bg-gray-100 text-sm">
         <strong>Recommandation :</strong> {recommandation}
       </div>
+      <button
+        onClick={handleSave}
+        className="mt-4 bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 ml-2"
+      >
+        Sauvegarder
+      </button>
     </div>
   );
 };

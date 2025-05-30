@@ -23,6 +23,22 @@ const OptiqueResults: React.FC<OptiqueResultsProps> = ({ length, attenuation, sp
     recommandation = "Le bilan est limite. Un ajustement des paramètres est conseillé.";
   }
 
+  const handleSave = () => {
+    const entry = {
+      date: new Date().toISOString(),
+      attFibre,
+      pertesEpissures,
+      pertesConnecteurs,
+      pertesTotales,
+      bilan,
+      params: { length, attenuation, splices, connectors, losses, power },
+    };
+    const history = JSON.parse(localStorage.getItem('optique_history') || '[]');
+    history.unshift(entry);
+    localStorage.setItem('optique_history', JSON.stringify(history.slice(0, 10)));
+    alert('Résultat optique sauvegardé !');
+  };
+
   return (
     <div className="mt-8">
       <h3 className="text-lg font-semibold mb-4">Résultats du bilan optique</h3>
@@ -57,6 +73,12 @@ const OptiqueResults: React.FC<OptiqueResultsProps> = ({ length, attenuation, sp
       <div className="mt-4 p-3 rounded bg-gray-100 text-sm">
         <strong>Recommandation :</strong> {recommandation}
       </div>
+      <button
+        onClick={handleSave}
+        className="mt-4 bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 ml-2"
+      >
+        Sauvegarder
+      </button>
     </div>
   );
 };

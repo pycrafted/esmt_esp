@@ -40,6 +40,20 @@ const HertzienResults: React.FC<HertzienResultsProps> = ({ frequency, distance, 
     return { d: d.toFixed(2), aff: Number(aff.toFixed(2)) };
   });
 
+  const handleSave = () => {
+    const entry = {
+      date: new Date().toISOString(),
+      affaiblissement,
+      bilan,
+      marge,
+      params: { frequency, distance, power, gainTx, gainRx, losses, threshold },
+    };
+    const history = JSON.parse(localStorage.getItem('hertzien_history') || '[]');
+    history.unshift(entry);
+    localStorage.setItem('hertzien_history', JSON.stringify(history.slice(0, 10)));
+    alert('Résultat hertzien sauvegardé !');
+  };
+
   return (
     <div className="mt-8">
       <h3 className="text-lg font-semibold mb-4">Résultats du bilan hertzien</h3>
@@ -78,6 +92,12 @@ const HertzienResults: React.FC<HertzienResultsProps> = ({ frequency, distance, 
           </LineChart>
         </ResponsiveContainer>
       </div>
+      <button
+        onClick={handleSave}
+        className="mt-4 bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 ml-2"
+      >
+        Sauvegarder
+      </button>
     </div>
   );
 };
