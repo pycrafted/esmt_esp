@@ -126,6 +126,14 @@ const OptiqueForm: React.FC<{ onSubmit?: (values: OptiqueFormValues) => void }> 
 
   return (
     <form onSubmit={handleSubmit} className="max-w-lg mx-auto bg-white p-6 rounded shadow space-y-4">
+      <div className="mb-4 p-3 bg-blue-50 border-l-4 border-blue-400 rounded">
+        <div className="font-semibold mb-1">À quoi ça sert ?</div>
+        <div className="text-sm text-gray-700">
+          Le module <b>Optique</b> permet de calculer le budget de puissance d'une liaison fibre optique : estimation des pertes, vérification de la faisabilité et optimisation des paramètres d'installation.<br/>
+          <b>Cas d'usage :</b> conception d'une liaison optique, validation d'un budget de puissance, étude d'impact d'une modification de la longueur ou des composants.<br/>
+          <b>Lien avec la théorie :</b> ce module met en pratique les notions d'atténuation, de pertes et de budget optique vues en cours de transmission optique (voir chapitre "Budget de puissance optique").
+        </div>
+      </div>
       <h2 className="text-xl font-bold mb-4">Paramètres Bilan Optique</h2>
       {/* Longueur de la liaison */}
       <div>

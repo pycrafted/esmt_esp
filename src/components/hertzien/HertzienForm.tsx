@@ -134,6 +134,14 @@ const HertzienForm: React.FC<{ onSubmit?: (values: HertzienFormValues) => void }
 
   return (
     <form onSubmit={handleSubmit} className="max-w-lg mx-auto bg-white p-6 rounded shadow space-y-4">
+      <div className="mb-4 p-3 bg-blue-50 border-l-4 border-blue-400 rounded">
+        <div className="font-semibold mb-1">À quoi ça sert ?</div>
+        <div className="text-sm text-gray-700">
+          Le module <b>Hertzien</b> permet de réaliser le bilan de liaison d'un faisceau hertzien (FH) : calcul de la marge, des pertes et de la faisabilité d'une liaison point à point.<br/>
+          <b>Cas d'usage :</b> conception d'un lien FH, vérification de la faisabilité d'une liaison, optimisation des paramètres radio.<br/>
+          <b>Lien avec la théorie :</b> ce module met en pratique les notions d'affaiblissement, de bilan de liaison et de propagation vues en cours de transmission hertzienne (voir chapitre "Bilan de liaison FH").
+        </div>
+      </div>
       <h2 className="text-xl font-bold mb-4">Paramètres Bilan Hertzien</h2>
       {/* Fréquence */}
       <div>

@@ -114,6 +114,14 @@ const GSMForm: React.FC<{ onSubmit?: (values: GSMFormValues) => void }> = ({ onS
 
   return (
     <form onSubmit={handleSubmit} className="max-w-lg mx-auto bg-white p-6 rounded shadow space-y-4">
+      <div className="mb-4 p-3 bg-blue-50 border-l-4 border-blue-400 rounded">
+        <div className="font-semibold mb-1">À quoi ça sert ?</div>
+        <div className="text-sm text-gray-700">
+          Le module <b>GSM</b> permet de dimensionner le nombre de sites nécessaires pour couvrir une zone donnée en fonction de la population, de la densité, du trafic et des paramètres radio.<br/>
+          <b>Cas d'usage :</b> planification d'un réseau GSM, simulation de scénarios de couverture, étude d'impact d'une variation de trafic.<br/>
+          <b>Lien avec la théorie :</b> ce module met en pratique les notions de dimensionnement cellulaire, de calcul de capacité et de couverture vues en cours de réseaux mobiles (voir chapitre "Dimensionnement GSM").
+        </div>
+      </div>
       <h2 className="text-xl font-bold mb-4">Paramètres GSM</h2>
       {/* Zone de couverture */}
       <div>

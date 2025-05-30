@@ -126,6 +126,14 @@ const UMTSForm: React.FC<{ onSubmit?: (values: UMTSFormValues) => void }> = ({ o
 
   return (
     <form onSubmit={handleSubmit} className="max-w-lg mx-auto bg-white p-6 rounded shadow space-y-4">
+      <div className="mb-4 p-3 bg-blue-50 border-l-4 border-blue-400 rounded">
+        <div className="font-semibold mb-1">À quoi ça sert ?</div>
+        <div className="text-sm text-gray-700">
+          Le module <b>UMTS</b> permet de dimensionner la capacité d'un réseau 3G pour une zone donnée. Il aide à estimer le nombre de cellules nécessaires en fonction du nombre d'utilisateurs, des débits voix, data et vidéo, et du facteur de charge.<br/>
+          <b>Cas d'usage :</b> planification d'un réseau urbain, simulation de scénarios de trafic, étude d'impact d'une augmentation d'utilisateurs.<br/>
+          <b>Lien avec la théorie :</b> ce module met en pratique les notions de capacité cellulaire, de partage de ressources radio et d'ingénierie de trafic vues en cours de réseaux mobiles (voir chapitre "Dimensionnement UMTS").
+        </div>
+      </div>
       <h2 className="text-xl font-bold mb-4">Paramètres UMTS</h2>
       {/* Zone de couverture */}
       <div>
