@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import OptiqueResults from './OptiqueResults';
 import InfoBulle from '../common/InfoBulle';
+import Glossaire from '../common/Glossaire';
 
 interface OptiqueFormValues {
   length: string;
@@ -53,11 +54,39 @@ const pedagogicHelp = {
   }
 };
 
+const exampleValues: OptiqueFormValues = {
+  length: '20', // km
+  attenuation: '0.35', // dB/km
+  splices: '8', //
+  connectors: '2', //
+  losses: '1', // dB
+  power: '0', // dBm
+};
+
+const scenarioPresets: { [key: string]: { values: OptiqueFormValues; msg: string } } = {
+  urbaine: {
+    values: { length: '10', attenuation: '0.35', splices: '4', connectors: '2', losses: '1', power: '0' },
+    msg: "Scénario urbain : 10 km, atténuation 0.35 dB/km, 4 épissures, 2 connecteurs, pertes 1 dB, puissance 0 dBm. Cas typique de fibre en ville."
+  },
+  longue: {
+    values: { length: '50', attenuation: '0.4', splices: '20', connectors: '4', losses: '2', power: '5' },
+    msg: "Scénario longue distance : 50 km, atténuation 0.4 dB/km, 20 épissures, 4 connecteurs, pertes 2 dB, puissance 5 dBm. Cas de liaison interurbaine ou dorsale."
+  },
+  campus: {
+    values: { length: '2', attenuation: '0.3', splices: '2', connectors: '2', losses: '0.5', power: '0' },
+    msg: "Scénario campus : 2 km, atténuation 0.3 dB/km, 2 épissures, 2 connecteurs, pertes 0.5 dB, puissance 0 dBm. Liaison courte et performante."
+  }
+};
+
 const OptiqueForm: React.FC<{ onSubmit?: (values: OptiqueFormValues) => void }> = ({ onSubmit }) => {
   const [values, setValues] = useState(initialValues);
   const [errors, setErrors] = useState<Partial<OptiqueFormValues>>({});
   const [showResults, setShowResults] = useState(false);
   const [showWhy, setShowWhy] = useState<{ [k: string]: boolean }>({});
+  const [exampleMsg, setExampleMsg] = useState<string | null>(null);
+  const [scenario, setScenario] = useState('');
+  const [showGlossaire, setShowGlossaire] = useState(false);
+  const [glossaireFocus, setGlossaireFocus] = useState<string | undefined>(undefined);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setValues({ ...values, [e.target.name]: e.target.value });
@@ -125,179 +154,215 @@ const OptiqueForm: React.FC<{ onSubmit?: (values: OptiqueFormValues) => void }> 
     }
   };
 
+  const handleFillExample = (e: React.MouseEvent) => {
+    e.preventDefault();
+    setValues(exampleValues);
+    setExampleMsg("Exemple : fibre de 20 km, atténuation 0.35 dB/km, 8 épissures, 2 connecteurs, pertes diverses 1 dB, puissance émetteur 0 dBm. Cas standard de liaison optique urbaine.");
+    setShowResults(false);
+  };
+
+  const handleScenarioChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const val = e.target.value;
+    setScenario(val);
+    if (scenarioPresets[val]) {
+      setValues(scenarioPresets[val].values);
+      setExampleMsg(scenarioPresets[val].msg);
+      setShowResults(false);
+    }
+  };
+
+  const handleOpenGlossaire = (id: string) => {
+    setGlossaireFocus(id);
+    setShowGlossaire(true);
+  };
+
   return (
-    <form onSubmit={handleSubmit} className="max-w-lg mx-auto bg-white p-6 rounded shadow space-y-4">
-      <div className="mb-4 p-3 bg-blue-50 border-l-4 border-blue-400 rounded">
-        <div className="font-semibold mb-1">À quoi ça sert ?</div>
-        <div className="text-sm text-gray-700">
-          Le module <b>Optique</b> permet de calculer le budget de puissance d'une liaison fibre optique : estimation des pertes, vérification de la faisabilité et optimisation des paramètres d'installation.<br/>
-          <b>Cas d'usage :</b> conception d'une liaison optique, validation d'un budget de puissance, étude d'impact d'une modification de la longueur ou des composants.<br/>
-          <b>Lien avec la théorie :</b> ce module met en pratique les notions d'atténuation, de pertes et de budget optique vues en cours de transmission optique (voir chapitre "Budget de puissance optique").
+    <>
+      <Glossaire open={showGlossaire} onClose={() => setShowGlossaire(false)} focusId={glossaireFocus} />
+      <form onSubmit={handleSubmit} className="max-w-lg mx-auto bg-white p-6 rounded shadow space-y-4">
+        <div className="mb-4 p-3 bg-blue-50 border-l-4 border-blue-400 rounded">
+          <div className="font-semibold mb-1">À quoi ça sert ?</div>
+          <div className="text-sm text-gray-700">
+            Le module <b>Optique</b> permet de calculer le budget de puissance d'une liaison fibre optique : estimation des pertes, vérification de la faisabilité et optimisation des paramètres d'installation.<br/>
+            <b>Cas d'usage :</b> conception d'une liaison optique, validation d'un budget de puissance, étude d'impact d'une modification de la longueur ou des composants.<br/>
+            <b>Lien avec la théorie :</b> ce module met en pratique les notions d'atténuation, de pertes et de budget optique vues en cours de transmission optique (voir chapitre "Budget de puissance optique").
+          </div>
         </div>
-      </div>
-      <h2 className="text-xl font-bold mb-4">Paramètres Bilan Optique</h2>
-      {/* Longueur de la liaison */}
-      <div>
-        <label className="block font-medium flex items-center gap-2">
-          Longueur de la liaison (km)
-          <InfoBulle content={<>
-            <b>Définition :</b> {pedagogicHelp.length.short}<br/>
-            <b>Unité :</b> km<br/>
-            <b>Exemple :</b> {pedagogicHelp.length.example}<br/>
-            <b>Impact :</b> {pedagogicHelp.length.why}
-          </>} />
-          <button type="button" onClick={() => handleShowWhy('length')} className="text-blue-600 text-xs underline">Pourquoi ?</button>
-        </label>
-        <input
-          type="number"
-          name="length"
-          value={values.length}
-          onChange={handleChange}
-          className="mt-1 w-full border rounded px-3 py-2"
-        />
-        {showWhy['length'] && (
-          <div className="text-xs text-blue-700 mb-1">{pedagogicHelp.length.why}</div>
+        <h2 className="text-xl font-bold mb-4">Paramètres Bilan Optique</h2>
+        <div className="mb-2">
+          <label className="block text-sm font-medium mb-1">Scénario</label>
+          <select value={scenario} onChange={handleScenarioChange} className="w-full border rounded px-2 py-1 text-sm">
+            <option value="">Choisir un scénario</option>
+            <option value="urbaine">Fibre urbaine</option>
+            <option value="longue">Longue distance</option>
+            <option value="campus">Campus</option>
+          </select>
+        </div>
+        <button onClick={handleFillExample} className="mb-2 bg-green-100 text-green-800 px-3 py-1 rounded text-sm hover:bg-green-200">Remplir avec un exemple</button>
+        {exampleMsg && <div className="mb-2 text-xs text-green-700">{exampleMsg}</div>}
+        {/* Longueur de la liaison */}
+        <div>
+          <label className="block font-medium flex items-center gap-2">
+            Longueur de la liaison (km)
+            <InfoBulle content={<>
+              <b>Définition :</b> {pedagogicHelp.length.short}<br/>
+              <b>Unité :</b> km<br/>
+              <b>Exemple :</b> {pedagogicHelp.length.example}<br/>
+              <b>Impact :</b> {pedagogicHelp.length.why}
+            </>} glossaireId="fibre" onOpenGlossaire={handleOpenGlossaire} />
+            <button type="button" onClick={() => handleShowWhy('length')} className="text-blue-600 text-xs underline">Pourquoi ?</button>
+          </label>
+          <input
+            type="number"
+            name="length"
+            value={values.length}
+            onChange={handleChange}
+            className="mt-1 w-full border rounded px-3 py-2"
+          />
+          {showWhy['length'] && (
+            <div className="text-xs text-blue-700 mb-1">{pedagogicHelp.length.why}</div>
+          )}
+          <div className="text-xs text-gray-600 mt-1">{getDynamicComment('length')}</div>
+          {errors.length && <span className="text-red-600 text-sm">{errors.length}</span>}
+        </div>
+        {/* Atténuation fibre */}
+        <div>
+          <label className="block font-medium flex items-center gap-2">
+            Atténuation fibre (dB/km)
+            <InfoBulle content={<>
+              <b>Définition :</b> {pedagogicHelp.attenuation.short}<br/>
+              <b>Unité :</b> dB/km<br/>
+              <b>Exemple :</b> {pedagogicHelp.attenuation.example}<br/>
+              <b>Impact :</b> {pedagogicHelp.attenuation.why}
+            </>} glossaireId="attenuation" onOpenGlossaire={handleOpenGlossaire} />
+            <button type="button" onClick={() => handleShowWhy('attenuation')} className="text-blue-600 text-xs underline">Pourquoi ?</button>
+          </label>
+          <input
+            type="number"
+            name="attenuation"
+            value={values.attenuation}
+            onChange={handleChange}
+            className="mt-1 w-full border rounded px-3 py-2"
+          />
+          {showWhy['attenuation'] && (
+            <div className="text-xs text-blue-700 mb-1">{pedagogicHelp.attenuation.why}</div>
+          )}
+          <div className="text-xs text-gray-600 mt-1">{getDynamicComment('attenuation')}</div>
+          {errors.attenuation && <span className="text-red-600 text-sm">{errors.attenuation}</span>}
+        </div>
+        {/* Nombre d'épissures */}
+        <div>
+          <label className="block font-medium flex items-center gap-2">
+            Nombre d'épissures
+            <InfoBulle content={<>
+              <b>Définition :</b> {pedagogicHelp.splices.short}<br/>
+              <b>Unité :</b> nombre<br/>
+              <b>Exemple :</b> {pedagogicHelp.splices.example}<br/>
+              <b>Impact :</b> {pedagogicHelp.splices.why}
+            </>} glossaireId="fibre" onOpenGlossaire={handleOpenGlossaire} />
+            <button type="button" onClick={() => handleShowWhy('splices')} className="text-blue-600 text-xs underline">Pourquoi ?</button>
+          </label>
+          <input
+            type="number"
+            name="splices"
+            value={values.splices}
+            onChange={handleChange}
+            className="mt-1 w-full border rounded px-3 py-2"
+          />
+          {showWhy['splices'] && (
+            <div className="text-xs text-blue-700 mb-1">{pedagogicHelp.splices.why}</div>
+          )}
+          <div className="text-xs text-gray-600 mt-1">{getDynamicComment('splices')}</div>
+          {errors.splices && <span className="text-red-600 text-sm">{errors.splices}</span>}
+        </div>
+        {/* Nombre de connecteurs */}
+        <div>
+          <label className="block font-medium flex items-center gap-2">
+            Nombre de connecteurs
+            <InfoBulle content={<>
+              <b>Définition :</b> {pedagogicHelp.connectors.short}<br/>
+              <b>Unité :</b> nombre<br/>
+              <b>Exemple :</b> {pedagogicHelp.connectors.example}<br/>
+              <b>Impact :</b> {pedagogicHelp.connectors.why}
+            </>} glossaireId="fibre" onOpenGlossaire={handleOpenGlossaire} />
+            <button type="button" onClick={() => handleShowWhy('connectors')} className="text-blue-600 text-xs underline">Pourquoi ?</button>
+          </label>
+          <input
+            type="number"
+            name="connectors"
+            value={values.connectors}
+            onChange={handleChange}
+            className="mt-1 w-full border rounded px-3 py-2"
+          />
+          {showWhy['connectors'] && (
+            <div className="text-xs text-blue-700 mb-1">{pedagogicHelp.connectors.why}</div>
+          )}
+          <div className="text-xs text-gray-600 mt-1">{getDynamicComment('connectors')}</div>
+          {errors.connectors && <span className="text-red-600 text-sm">{errors.connectors}</span>}
+        </div>
+        {/* Pertes diverses */}
+        <div>
+          <label className="block font-medium flex items-center gap-2">
+            Pertes diverses (dB)
+            <InfoBulle content={<>
+              <b>Définition :</b> {pedagogicHelp.losses.short}<br/>
+              <b>Unité :</b> dB<br/>
+              <b>Exemple :</b> {pedagogicHelp.losses.example}<br/>
+              <b>Impact :</b> {pedagogicHelp.losses.why}
+            </>} glossaireId="attenuation" onOpenGlossaire={handleOpenGlossaire} />
+            <button type="button" onClick={() => handleShowWhy('losses')} className="text-blue-600 text-xs underline">Pourquoi ?</button>
+          </label>
+          <input
+            type="number"
+            name="losses"
+            value={values.losses}
+            onChange={handleChange}
+            className="mt-1 w-full border rounded px-3 py-2"
+          />
+          {showWhy['losses'] && (
+            <div className="text-xs text-blue-700 mb-1">{pedagogicHelp.losses.why}</div>
+          )}
+          <div className="text-xs text-gray-600 mt-1">{getDynamicComment('losses')}</div>
+          {errors.losses && <span className="text-red-600 text-sm">{errors.losses}</span>}
+        </div>
+        {/* Puissance émetteur */}
+        <div>
+          <label className="block font-medium flex items-center gap-2">
+            Puissance émetteur (dBm)
+            <InfoBulle content={<>
+              <b>Définition :</b> {pedagogicHelp.power.short}<br/>
+              <b>Unité :</b> dBm<br/>
+              <b>Exemple :</b> {pedagogicHelp.power.example}<br/>
+              <b>Impact :</b> {pedagogicHelp.power.why}
+            </>} glossaireId="dBm" onOpenGlossaire={handleOpenGlossaire} />
+            <button type="button" onClick={() => handleShowWhy('power')} className="text-blue-600 text-xs underline">Pourquoi ?</button>
+          </label>
+          <input
+            type="number"
+            name="power"
+            value={values.power}
+            onChange={handleChange}
+            className="mt-1 w-full border rounded px-3 py-2"
+          />
+          {showWhy['power'] && (
+            <div className="text-xs text-blue-700 mb-1">{pedagogicHelp.power.why}</div>
+          )}
+          <div className="text-xs text-gray-600 mt-1">{getDynamicComment('power')}</div>
+          {errors.power && <span className="text-red-600 text-sm">{errors.power}</span>}
+        </div>
+        <button type="submit" className="bg-blue-700 text-white px-4 py-2 rounded hover:bg-blue-800">Calculer</button>
+        {showResults && (
+          <OptiqueResults
+            length={Number(values.length)}
+            attenuation={Number(values.attenuation)}
+            splices={Number(values.splices)}
+            connectors={Number(values.connectors)}
+            losses={Number(values.losses)}
+            power={Number(values.power)}
+          />
         )}
-        <div className="text-xs text-gray-600 mt-1">{getDynamicComment('length')}</div>
-        {errors.length && <span className="text-red-600 text-sm">{errors.length}</span>}
-      </div>
-      {/* Atténuation fibre */}
-      <div>
-        <label className="block font-medium flex items-center gap-2">
-          Atténuation fibre (dB/km)
-          <InfoBulle content={<>
-            <b>Définition :</b> {pedagogicHelp.attenuation.short}<br/>
-            <b>Unité :</b> dB/km<br/>
-            <b>Exemple :</b> {pedagogicHelp.attenuation.example}<br/>
-            <b>Impact :</b> {pedagogicHelp.attenuation.why}
-          </>} />
-          <button type="button" onClick={() => handleShowWhy('attenuation')} className="text-blue-600 text-xs underline">Pourquoi ?</button>
-        </label>
-        <input
-          type="number"
-          name="attenuation"
-          value={values.attenuation}
-          onChange={handleChange}
-          className="mt-1 w-full border rounded px-3 py-2"
-        />
-        {showWhy['attenuation'] && (
-          <div className="text-xs text-blue-700 mb-1">{pedagogicHelp.attenuation.why}</div>
-        )}
-        <div className="text-xs text-gray-600 mt-1">{getDynamicComment('attenuation')}</div>
-        {errors.attenuation && <span className="text-red-600 text-sm">{errors.attenuation}</span>}
-      </div>
-      {/* Nombre d'épissures */}
-      <div>
-        <label className="block font-medium flex items-center gap-2">
-          Nombre d'épissures
-          <InfoBulle content={<>
-            <b>Définition :</b> {pedagogicHelp.splices.short}<br/>
-            <b>Unité :</b> nombre<br/>
-            <b>Exemple :</b> {pedagogicHelp.splices.example}<br/>
-            <b>Impact :</b> {pedagogicHelp.splices.why}
-          </>} />
-          <button type="button" onClick={() => handleShowWhy('splices')} className="text-blue-600 text-xs underline">Pourquoi ?</button>
-        </label>
-        <input
-          type="number"
-          name="splices"
-          value={values.splices}
-          onChange={handleChange}
-          className="mt-1 w-full border rounded px-3 py-2"
-        />
-        {showWhy['splices'] && (
-          <div className="text-xs text-blue-700 mb-1">{pedagogicHelp.splices.why}</div>
-        )}
-        <div className="text-xs text-gray-600 mt-1">{getDynamicComment('splices')}</div>
-        {errors.splices && <span className="text-red-600 text-sm">{errors.splices}</span>}
-      </div>
-      {/* Nombre de connecteurs */}
-      <div>
-        <label className="block font-medium flex items-center gap-2">
-          Nombre de connecteurs
-          <InfoBulle content={<>
-            <b>Définition :</b> {pedagogicHelp.connectors.short}<br/>
-            <b>Unité :</b> nombre<br/>
-            <b>Exemple :</b> {pedagogicHelp.connectors.example}<br/>
-            <b>Impact :</b> {pedagogicHelp.connectors.why}
-          </>} />
-          <button type="button" onClick={() => handleShowWhy('connectors')} className="text-blue-600 text-xs underline">Pourquoi ?</button>
-        </label>
-        <input
-          type="number"
-          name="connectors"
-          value={values.connectors}
-          onChange={handleChange}
-          className="mt-1 w-full border rounded px-3 py-2"
-        />
-        {showWhy['connectors'] && (
-          <div className="text-xs text-blue-700 mb-1">{pedagogicHelp.connectors.why}</div>
-        )}
-        <div className="text-xs text-gray-600 mt-1">{getDynamicComment('connectors')}</div>
-        {errors.connectors && <span className="text-red-600 text-sm">{errors.connectors}</span>}
-      </div>
-      {/* Pertes diverses */}
-      <div>
-        <label className="block font-medium flex items-center gap-2">
-          Pertes diverses (dB)
-          <InfoBulle content={<>
-            <b>Définition :</b> {pedagogicHelp.losses.short}<br/>
-            <b>Unité :</b> dB<br/>
-            <b>Exemple :</b> {pedagogicHelp.losses.example}<br/>
-            <b>Impact :</b> {pedagogicHelp.losses.why}
-          </>} />
-          <button type="button" onClick={() => handleShowWhy('losses')} className="text-blue-600 text-xs underline">Pourquoi ?</button>
-        </label>
-        <input
-          type="number"
-          name="losses"
-          value={values.losses}
-          onChange={handleChange}
-          className="mt-1 w-full border rounded px-3 py-2"
-        />
-        {showWhy['losses'] && (
-          <div className="text-xs text-blue-700 mb-1">{pedagogicHelp.losses.why}</div>
-        )}
-        <div className="text-xs text-gray-600 mt-1">{getDynamicComment('losses')}</div>
-        {errors.losses && <span className="text-red-600 text-sm">{errors.losses}</span>}
-      </div>
-      {/* Puissance émetteur */}
-      <div>
-        <label className="block font-medium flex items-center gap-2">
-          Puissance émetteur (dBm)
-          <InfoBulle content={<>
-            <b>Définition :</b> {pedagogicHelp.power.short}<br/>
-            <b>Unité :</b> dBm<br/>
-            <b>Exemple :</b> {pedagogicHelp.power.example}<br/>
-            <b>Impact :</b> {pedagogicHelp.power.why}
-          </>} />
-          <button type="button" onClick={() => handleShowWhy('power')} className="text-blue-600 text-xs underline">Pourquoi ?</button>
-        </label>
-        <input
-          type="number"
-          name="power"
-          value={values.power}
-          onChange={handleChange}
-          className="mt-1 w-full border rounded px-3 py-2"
-        />
-        {showWhy['power'] && (
-          <div className="text-xs text-blue-700 mb-1">{pedagogicHelp.power.why}</div>
-        )}
-        <div className="text-xs text-gray-600 mt-1">{getDynamicComment('power')}</div>
-        {errors.power && <span className="text-red-600 text-sm">{errors.power}</span>}
-      </div>
-      <button type="submit" className="bg-blue-700 text-white px-4 py-2 rounded hover:bg-blue-800">Calculer</button>
-      {showResults && (
-        <OptiqueResults
-          length={Number(values.length)}
-          attenuation={Number(values.attenuation)}
-          splices={Number(values.splices)}
-          connectors={Number(values.connectors)}
-          losses={Number(values.losses)}
-          power={Number(values.power)}
-        />
-      )}
-    </form>
+      </form>
+    </>
   );
 };
 

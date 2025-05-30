@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 interface OptiqueResultsProps {
   length: number; // km
@@ -39,6 +39,8 @@ const OptiqueResults: React.FC<OptiqueResultsProps> = ({ length, attenuation, sp
     alert('Résultat optique sauvegardé !');
   };
 
+  const [showFormula, setShowFormula] = useState(false);
+
   return (
     <div className="mt-8">
       <h3 className="text-lg font-semibold mb-4">Résultats du bilan optique</h3>
@@ -70,6 +72,30 @@ const OptiqueResults: React.FC<OptiqueResultsProps> = ({ length, attenuation, sp
           </tr>
         </tbody>
       </table>
+      <button
+        onClick={() => setShowFormula((v) => !v)}
+        className="mt-3 mb-2 bg-blue-100 text-blue-800 px-3 py-1 rounded text-sm hover:bg-blue-200"
+      >
+        {showFormula ? 'Masquer la formule' : 'Voir la formule'}
+      </button>
+      {showFormula && (
+        <div className="mb-4 p-3 bg-blue-50 border-l-4 border-blue-400 rounded text-sm">
+          <b>Formule de l'atténuation fibre :</b><br/>
+          <span className="font-mono">A<sub>fibre</sub> = L × a</span><br/>
+          où <b>L</b> = longueur (km), <b>a</b> = atténuation (dB/km)<br/><br/>
+          <b>Formule des pertes épissures :</b><br/>
+          <span className="font-mono">P<sub>épissures</sub> = N<sub>épissures</sub> × 0.1</span><br/>
+          <b>Formule des pertes connecteurs :</b><br/>
+          <span className="font-mono">P<sub>connecteurs</sub> = N<sub>connecteurs</sub> × 0.5</span><br/>
+          <b>Formule des pertes totales :</b><br/>
+          <span className="font-mono">P<sub>totales</sub> = A<sub>fibre</sub> + P<sub>épissures</sub> + P<sub>connecteurs</sub> + P<sub>diverses</sub></span><br/>
+          <b>Formule du bilan de puissance :</b><br/>
+          <span className="font-mono">Bilan = P<sub>ém</sub> - P<sub>totales</sub></span><br/>
+          où <b>P<sub>ém</sub></b> = puissance émetteur (dBm)<br/><br/>
+          <b>Explication :</b> On additionne toutes les pertes (fibre, épissures, connecteurs, diverses), puis on les soustrait à la puissance d'émission pour obtenir le bilan.<br/>
+          <a href="#" className="text-blue-700 underline" target="_blank" rel="noopener">Voir le cours : Budget de puissance optique</a>
+        </div>
+      )}
       <div className="mt-4 p-3 rounded bg-gray-100 text-sm">
         <strong>Recommandation :</strong> {recommandation}
       </div>

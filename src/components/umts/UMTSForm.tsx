@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import UMTSResults from './UMTSResults';
 import InfoBulle from '../common/InfoBulle';
+import Glossaire from '../common/Glossaire';
 
 interface UMTSFormValues {
   area: string;
@@ -53,11 +54,39 @@ const pedagogicHelp = {
   }
 };
 
+const exampleValues: UMTSFormValues = {
+  area: '10', // 10 km²
+  users: '2000',
+  voice: '12.2', // kbps (AMR)
+  data: '128', // kbps
+  video: '256', // kbps
+  load: '60', // %
+};
+
+const scenarioPresets: { [key: string]: { values: UMTSFormValues; msg: string } } = {
+  urbain: {
+    values: { area: '10', users: '2000', voice: '12.2', data: '128', video: '256', load: '60' },
+    msg: "Scénario urbain : 10 km², 2000 utilisateurs, débits standards. Cas typique de planification 3G en ville."
+  },
+  rural: {
+    values: { area: '50', users: '500', voice: '8', data: '64', video: '128', load: '50' },
+    msg: "Scénario rural : 50 km², 500 utilisateurs, débits plus faibles, facteur de charge réduit. Moins de cellules nécessaires, mais couverture plus difficile."
+  },
+  campus: {
+    values: { area: '2', users: '1000', voice: '12.2', data: '384', video: '512', load: '70' },
+    msg: "Scénario campus : 2 km², 1000 utilisateurs, débits élevés (data/vidéo), facteur de charge important. Forte sollicitation sur une petite zone."
+  }
+};
+
 const UMTSForm: React.FC<{ onSubmit?: (values: UMTSFormValues) => void }> = ({ onSubmit }) => {
   const [values, setValues] = useState(initialValues);
   const [errors, setErrors] = useState<Partial<UMTSFormValues>>({});
   const [showResults, setShowResults] = useState(false);
   const [showWhy, setShowWhy] = useState<{ [k: string]: boolean }>({});
+  const [exampleMsg, setExampleMsg] = useState<string | null>(null);
+  const [scenario, setScenario] = useState('');
+  const [showGlossaire, setShowGlossaire] = useState(false);
+  const [glossaireFocus, setGlossaireFocus] = useState<string | undefined>(undefined);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setValues({ ...values, [e.target.name]: e.target.value });
@@ -125,179 +154,215 @@ const UMTSForm: React.FC<{ onSubmit?: (values: UMTSFormValues) => void }> = ({ o
     }
   };
 
+  const handleFillExample = (e: React.MouseEvent) => {
+    e.preventDefault();
+    setValues(exampleValues);
+    setExampleMsg("Exemple : zone urbaine de 10 km², 2000 utilisateurs, débits standards (voix 12.2 kbps, data 128 kbps, vidéo 256 kbps, facteur de charge 60%). Permet de simuler un cas courant de planification 3G.");
+    setShowResults(false);
+  };
+
+  const handleScenarioChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const val = e.target.value;
+    setScenario(val);
+    if (scenarioPresets[val]) {
+      setValues(scenarioPresets[val].values);
+      setExampleMsg(scenarioPresets[val].msg);
+      setShowResults(false);
+    }
+  };
+
+  const handleOpenGlossaire = (id: string) => {
+    setGlossaireFocus(id);
+    setShowGlossaire(true);
+  };
+
   return (
-    <form onSubmit={handleSubmit} className="max-w-lg mx-auto bg-white p-6 rounded shadow space-y-4">
-      <div className="mb-4 p-3 bg-blue-50 border-l-4 border-blue-400 rounded">
-        <div className="font-semibold mb-1">À quoi ça sert ?</div>
-        <div className="text-sm text-gray-700">
-          Le module <b>UMTS</b> permet de dimensionner la capacité d'un réseau 3G pour une zone donnée. Il aide à estimer le nombre de cellules nécessaires en fonction du nombre d'utilisateurs, des débits voix, data et vidéo, et du facteur de charge.<br/>
-          <b>Cas d'usage :</b> planification d'un réseau urbain, simulation de scénarios de trafic, étude d'impact d'une augmentation d'utilisateurs.<br/>
-          <b>Lien avec la théorie :</b> ce module met en pratique les notions de capacité cellulaire, de partage de ressources radio et d'ingénierie de trafic vues en cours de réseaux mobiles (voir chapitre "Dimensionnement UMTS").
+    <>
+      <Glossaire open={showGlossaire} onClose={() => setShowGlossaire(false)} focusId={glossaireFocus} />
+      <form onSubmit={handleSubmit} className="max-w-lg mx-auto bg-white p-6 rounded shadow space-y-4">
+        <div className="mb-2">
+          <label className="block text-sm font-medium mb-1">Scénario</label>
+          <select value={scenario} onChange={handleScenarioChange} className="w-full border rounded px-2 py-1 text-sm">
+            <option value="">Choisir un scénario</option>
+            <option value="urbain">Zone urbaine</option>
+            <option value="rural">Zone rurale</option>
+            <option value="campus">Campus</option>
+          </select>
         </div>
-      </div>
-      <h2 className="text-xl font-bold mb-4">Paramètres UMTS</h2>
-      {/* Zone de couverture */}
-      <div>
-        <label className="block font-medium flex items-center gap-2">
-          Zone de couverture (km²)
-          <InfoBulle content={<>
-            <b>Définition :</b> {pedagogicHelp.area.short}<br/>
-            <b>Unité :</b> km²<br/>
-            <b>Exemple :</b> {pedagogicHelp.area.example}<br/>
-            <b>Impact :</b> {pedagogicHelp.area.why}
-          </>} />
-          <button type="button" onClick={() => handleShowWhy('area')} className="text-blue-600 text-xs underline">Pourquoi ?</button>
-        </label>
-        <input
-          type="number"
-          name="area"
-          value={values.area}
-          onChange={handleChange}
-          className="mt-1 w-full border rounded px-3 py-2"
-        />
-        {showWhy['area'] && (
-          <div className="text-xs text-blue-700 mb-1">{pedagogicHelp.area.why}</div>
+        <button onClick={handleFillExample} className="mb-2 bg-green-100 text-green-800 px-3 py-1 rounded text-sm hover:bg-green-200">Remplir avec un exemple</button>
+        {exampleMsg && <div className="mb-2 text-xs text-green-700">{exampleMsg}</div>}
+        <div className="mb-4 p-3 bg-blue-50 border-l-4 border-blue-400 rounded">
+          <div className="font-semibold mb-1">À quoi ça sert ?</div>
+          <div className="text-sm text-gray-700">
+            Le module <b>UMTS</b> permet de dimensionner la capacité d'un réseau 3G pour une zone donnée. Il aide à estimer le nombre de cellules nécessaires en fonction du nombre d'utilisateurs, des débits voix, data et vidéo, et du facteur de charge.<br/>
+            <b>Cas d'usage :</b> planification d'un réseau urbain, simulation de scénarios de trafic, étude d'impact d'une augmentation d'utilisateurs.<br/>
+            <b>Lien avec la théorie :</b> ce module met en pratique les notions de capacité cellulaire, de partage de ressources radio et d'ingénierie de trafic vues en cours de réseaux mobiles (voir chapitre "Dimensionnement UMTS").
+          </div>
+        </div>
+        <h2 className="text-xl font-bold mb-4">Paramètres UMTS</h2>
+        {/* Zone de couverture */}
+        <div>
+          <label className="block font-medium flex items-center gap-2">
+            Zone de couverture (km²)
+            <InfoBulle content={<>
+              <b>Définition :</b> {pedagogicHelp.area.short}<br/>
+              <b>Unité :</b> km²<br/>
+              <b>Exemple :</b> {pedagogicHelp.area.example}<br/>
+              <b>Impact :</b> {pedagogicHelp.area.why}
+            </>} glossaireId="cellule" onOpenGlossaire={handleOpenGlossaire} />
+            <button type="button" onClick={() => handleShowWhy('area')} className="text-blue-600 text-xs underline">Pourquoi ?</button>
+          </label>
+          <input
+            type="number"
+            name="area"
+            value={values.area}
+            onChange={handleChange}
+            className="mt-1 w-full border rounded px-3 py-2"
+          />
+          {showWhy['area'] && (
+            <div className="text-xs text-blue-700 mb-1">{pedagogicHelp.area.why}</div>
+          )}
+          <div className="text-xs text-gray-600 mt-1">{getDynamicComment('area')}</div>
+          {errors.area && <span className="text-red-600 text-sm">{errors.area}</span>}
+        </div>
+        {/* Nombre d'utilisateurs */}
+        <div>
+          <label className="block font-medium flex items-center gap-2">
+            Nombre d'utilisateurs
+            <InfoBulle content={<>
+              <b>Définition :</b> {pedagogicHelp.users.short}<br/>
+              <b>Unité :</b> nombre<br/>
+              <b>Exemple :</b> {pedagogicHelp.users.example}<br/>
+              <b>Impact :</b> {pedagogicHelp.users.why}
+            </>} glossaireId="cellule" onOpenGlossaire={handleOpenGlossaire} />
+            <button type="button" onClick={() => handleShowWhy('users')} className="text-blue-600 text-xs underline">Pourquoi ?</button>
+          </label>
+          <input
+            type="number"
+            name="users"
+            value={values.users}
+            onChange={handleChange}
+            className="mt-1 w-full border rounded px-3 py-2"
+          />
+          {showWhy['users'] && (
+            <div className="text-xs text-blue-700 mb-1">{pedagogicHelp.users.why}</div>
+          )}
+          <div className="text-xs text-gray-600 mt-1">{getDynamicComment('users')}</div>
+          {errors.users && <span className="text-red-600 text-sm">{errors.users}</span>}
+        </div>
+        {/* Débit voix */}
+        <div>
+          <label className="block font-medium flex items-center gap-2">
+            Débit voix par utilisateur (kbps)
+            <InfoBulle content={<>
+              <b>Définition :</b> {pedagogicHelp.voice.short}<br/>
+              <b>Unité :</b> kbps<br/>
+              <b>Exemple :</b> {pedagogicHelp.voice.example}<br/>
+              <b>Impact :</b> {pedagogicHelp.voice.why}
+            </>} glossaireId="voice" onOpenGlossaire={handleOpenGlossaire} />
+            <button type="button" onClick={() => handleShowWhy('voice')} className="text-blue-600 text-xs underline">Pourquoi ?</button>
+          </label>
+          <input
+            type="number"
+            name="voice"
+            value={values.voice}
+            onChange={handleChange}
+            className="mt-1 w-full border rounded px-3 py-2"
+          />
+          {showWhy['voice'] && (
+            <div className="text-xs text-blue-700 mb-1">{pedagogicHelp.voice.why}</div>
+          )}
+          <div className="text-xs text-gray-600 mt-1">{getDynamicComment('voice')}</div>
+          {errors.voice && <span className="text-red-600 text-sm">{errors.voice}</span>}
+        </div>
+        {/* Débit data */}
+        <div>
+          <label className="block font-medium flex items-center gap-2">
+            Débit data par utilisateur (kbps)
+            <InfoBulle content={<>
+              <b>Définition :</b> {pedagogicHelp.data.short}<br/>
+              <b>Unité :</b> kbps<br/>
+              <b>Exemple :</b> {pedagogicHelp.data.example}<br/>
+              <b>Impact :</b> {pedagogicHelp.data.why}
+            </>} glossaireId="data" onOpenGlossaire={handleOpenGlossaire} />
+            <button type="button" onClick={() => handleShowWhy('data')} className="text-blue-600 text-xs underline">Pourquoi ?</button>
+          </label>
+          <input
+            type="number"
+            name="data"
+            value={values.data}
+            onChange={handleChange}
+            className="mt-1 w-full border rounded px-3 py-2"
+          />
+          {showWhy['data'] && (
+            <div className="text-xs text-blue-700 mb-1">{pedagogicHelp.data.why}</div>
+          )}
+          <div className="text-xs text-gray-600 mt-1">{getDynamicComment('data')}</div>
+          {errors.data && <span className="text-red-600 text-sm">{errors.data}</span>}
+        </div>
+        {/* Débit vidéo */}
+        <div>
+          <label className="block font-medium flex items-center gap-2">
+            Débit vidéo par utilisateur (kbps)
+            <InfoBulle content={<>
+              <b>Définition :</b> {pedagogicHelp.video.short}<br/>
+              <b>Unité :</b> kbps<br/>
+              <b>Exemple :</b> {pedagogicHelp.video.example}<br/>
+              <b>Impact :</b> {pedagogicHelp.video.why}
+            </>} glossaireId="video" onOpenGlossaire={handleOpenGlossaire} />
+            <button type="button" onClick={() => handleShowWhy('video')} className="text-blue-600 text-xs underline">Pourquoi ?</button>
+          </label>
+          <input
+            type="number"
+            name="video"
+            value={values.video}
+            onChange={handleChange}
+            className="mt-1 w-full border rounded px-3 py-2"
+          />
+          {showWhy['video'] && (
+            <div className="text-xs text-blue-700 mb-1">{pedagogicHelp.video.why}</div>
+          )}
+          <div className="text-xs text-gray-600 mt-1">{getDynamicComment('video')}</div>
+          {errors.video && <span className="text-red-600 text-sm">{errors.video}</span>}
+        </div>
+        {/* Facteur de charge */}
+        <div>
+          <label className="block font-medium flex items-center gap-2">
+            Facteur de charge (%)
+            <InfoBulle content={<>
+              <b>Définition :</b> {pedagogicHelp.load.short}<br/>
+              <b>Unité :</b> %<br/>
+              <b>Exemple :</b> {pedagogicHelp.load.example}<br/>
+              <b>Impact :</b> {pedagogicHelp.load.why}
+            </>} glossaireId="load" onOpenGlossaire={handleOpenGlossaire} />
+            <button type="button" onClick={() => handleShowWhy('load')} className="text-blue-600 text-xs underline">Pourquoi ?</button>
+          </label>
+          <input
+            type="number"
+            name="load"
+            value={values.load}
+            onChange={handleChange}
+            className="mt-1 w-full border rounded px-3 py-2"
+          />
+          {showWhy['load'] && (
+            <div className="text-xs text-blue-700 mb-1">{pedagogicHelp.load.why}</div>
+          )}
+          <div className="text-xs text-gray-600 mt-1">{getDynamicComment('load')}</div>
+          {errors.load && <span className="text-red-600 text-sm">{errors.load}</span>}
+        </div>
+        <button type="submit" className="bg-blue-700 text-white px-4 py-2 rounded hover:bg-blue-800">Calculer</button>
+        {showResults && (
+          <UMTSResults
+            area={Number(values.area)}
+            users={Number(values.users)}
+            voice={Number(values.voice)}
+            data={Number(values.data)}
+            video={Number(values.video)}
+            load={Number(values.load)}
+          />
         )}
-        <div className="text-xs text-gray-600 mt-1">{getDynamicComment('area')}</div>
-        {errors.area && <span className="text-red-600 text-sm">{errors.area}</span>}
-      </div>
-      {/* Nombre d'utilisateurs */}
-      <div>
-        <label className="block font-medium flex items-center gap-2">
-          Nombre d'utilisateurs
-          <InfoBulle content={<>
-            <b>Définition :</b> {pedagogicHelp.users.short}<br/>
-            <b>Unité :</b> nombre<br/>
-            <b>Exemple :</b> {pedagogicHelp.users.example}<br/>
-            <b>Impact :</b> {pedagogicHelp.users.why}
-          </>} />
-          <button type="button" onClick={() => handleShowWhy('users')} className="text-blue-600 text-xs underline">Pourquoi ?</button>
-        </label>
-        <input
-          type="number"
-          name="users"
-          value={values.users}
-          onChange={handleChange}
-          className="mt-1 w-full border rounded px-3 py-2"
-        />
-        {showWhy['users'] && (
-          <div className="text-xs text-blue-700 mb-1">{pedagogicHelp.users.why}</div>
-        )}
-        <div className="text-xs text-gray-600 mt-1">{getDynamicComment('users')}</div>
-        {errors.users && <span className="text-red-600 text-sm">{errors.users}</span>}
-      </div>
-      {/* Débit voix */}
-      <div>
-        <label className="block font-medium flex items-center gap-2">
-          Débit voix par utilisateur (kbps)
-          <InfoBulle content={<>
-            <b>Définition :</b> {pedagogicHelp.voice.short}<br/>
-            <b>Unité :</b> kbps<br/>
-            <b>Exemple :</b> {pedagogicHelp.voice.example}<br/>
-            <b>Impact :</b> {pedagogicHelp.voice.why}
-          </>} />
-          <button type="button" onClick={() => handleShowWhy('voice')} className="text-blue-600 text-xs underline">Pourquoi ?</button>
-        </label>
-        <input
-          type="number"
-          name="voice"
-          value={values.voice}
-          onChange={handleChange}
-          className="mt-1 w-full border rounded px-3 py-2"
-        />
-        {showWhy['voice'] && (
-          <div className="text-xs text-blue-700 mb-1">{pedagogicHelp.voice.why}</div>
-        )}
-        <div className="text-xs text-gray-600 mt-1">{getDynamicComment('voice')}</div>
-        {errors.voice && <span className="text-red-600 text-sm">{errors.voice}</span>}
-      </div>
-      {/* Débit data */}
-      <div>
-        <label className="block font-medium flex items-center gap-2">
-          Débit data par utilisateur (kbps)
-          <InfoBulle content={<>
-            <b>Définition :</b> {pedagogicHelp.data.short}<br/>
-            <b>Unité :</b> kbps<br/>
-            <b>Exemple :</b> {pedagogicHelp.data.example}<br/>
-            <b>Impact :</b> {pedagogicHelp.data.why}
-          </>} />
-          <button type="button" onClick={() => handleShowWhy('data')} className="text-blue-600 text-xs underline">Pourquoi ?</button>
-        </label>
-        <input
-          type="number"
-          name="data"
-          value={values.data}
-          onChange={handleChange}
-          className="mt-1 w-full border rounded px-3 py-2"
-        />
-        {showWhy['data'] && (
-          <div className="text-xs text-blue-700 mb-1">{pedagogicHelp.data.why}</div>
-        )}
-        <div className="text-xs text-gray-600 mt-1">{getDynamicComment('data')}</div>
-        {errors.data && <span className="text-red-600 text-sm">{errors.data}</span>}
-      </div>
-      {/* Débit vidéo */}
-      <div>
-        <label className="block font-medium flex items-center gap-2">
-          Débit vidéo par utilisateur (kbps)
-          <InfoBulle content={<>
-            <b>Définition :</b> {pedagogicHelp.video.short}<br/>
-            <b>Unité :</b> kbps<br/>
-            <b>Exemple :</b> {pedagogicHelp.video.example}<br/>
-            <b>Impact :</b> {pedagogicHelp.video.why}
-          </>} />
-          <button type="button" onClick={() => handleShowWhy('video')} className="text-blue-600 text-xs underline">Pourquoi ?</button>
-        </label>
-        <input
-          type="number"
-          name="video"
-          value={values.video}
-          onChange={handleChange}
-          className="mt-1 w-full border rounded px-3 py-2"
-        />
-        {showWhy['video'] && (
-          <div className="text-xs text-blue-700 mb-1">{pedagogicHelp.video.why}</div>
-        )}
-        <div className="text-xs text-gray-600 mt-1">{getDynamicComment('video')}</div>
-        {errors.video && <span className="text-red-600 text-sm">{errors.video}</span>}
-      </div>
-      {/* Facteur de charge */}
-      <div>
-        <label className="block font-medium flex items-center gap-2">
-          Facteur de charge (%)
-          <InfoBulle content={<>
-            <b>Définition :</b> {pedagogicHelp.load.short}<br/>
-            <b>Unité :</b> %<br/>
-            <b>Exemple :</b> {pedagogicHelp.load.example}<br/>
-            <b>Impact :</b> {pedagogicHelp.load.why}
-          </>} />
-          <button type="button" onClick={() => handleShowWhy('load')} className="text-blue-600 text-xs underline">Pourquoi ?</button>
-        </label>
-        <input
-          type="number"
-          name="load"
-          value={values.load}
-          onChange={handleChange}
-          className="mt-1 w-full border rounded px-3 py-2"
-        />
-        {showWhy['load'] && (
-          <div className="text-xs text-blue-700 mb-1">{pedagogicHelp.load.why}</div>
-        )}
-        <div className="text-xs text-gray-600 mt-1">{getDynamicComment('load')}</div>
-        {errors.load && <span className="text-red-600 text-sm">{errors.load}</span>}
-      </div>
-      <button type="submit" className="bg-blue-700 text-white px-4 py-2 rounded hover:bg-blue-800">Calculer</button>
-      {showResults && (
-        <UMTSResults
-          area={Number(values.area)}
-          users={Number(values.users)}
-          voice={Number(values.voice)}
-          data={Number(values.data)}
-          video={Number(values.video)}
-          load={Number(values.load)}
-        />
-      )}
-    </form>
+      </form>
+    </>
   );
 };
 

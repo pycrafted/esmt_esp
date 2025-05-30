@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 
 interface HertzienResultsProps {
@@ -40,6 +40,8 @@ const HertzienResults: React.FC<HertzienResultsProps> = ({ frequency, distance, 
     return { d: d.toFixed(2), aff: Number(aff.toFixed(2)) };
   });
 
+  const [showFormula, setShowFormula] = useState(false);
+
   const handleSave = () => {
     const entry = {
       date: new Date().toISOString(),
@@ -77,6 +79,27 @@ const HertzienResults: React.FC<HertzienResultsProps> = ({ frequency, distance, 
           </tr>
         </tbody>
       </table>
+      <button
+        onClick={() => setShowFormula((v) => !v)}
+        className="mt-3 mb-2 bg-blue-100 text-blue-800 px-3 py-1 rounded text-sm hover:bg-blue-200"
+      >
+        {showFormula ? 'Masquer la formule' : 'Voir la formule'}
+      </button>
+      {showFormula && (
+        <div className="mb-4 p-3 bg-blue-50 border-l-4 border-blue-400 rounded text-sm">
+          <b>Formule de l'affaiblissement espace libre :</b><br/>
+          <span className="font-mono">A = 32.4 + 20·log₁₀(F) + 20·log₁₀(D)</span><br/>
+          où <b>A</b> = affaiblissement (dB), <b>F</b> = fréquence (MHz), <b>D</b> = distance (km)<br/><br/>
+          <b>Formule du bilan de liaison :</b><br/>
+          <span className="font-mono">Bilan = P<sub>ém</sub> + G<sub>Tx</sub> + G<sub>Rx</sub> - A - Pertes</span><br/>
+          où <b>P<sub>ém</sub></b> = puissance émission (dBm), <b>G<sub>Tx</sub></b> = gain antenne émission (dBi), <b>G<sub>Rx</sub></b> = gain antenne réception (dBi), <b>Pertes</b> = pertes diverses (dB)<br/><br/>
+          <b>Formule de la marge de liaison :</b><br/>
+          <span className="font-mono">Marge = Bilan - Seuil</span><br/>
+          où <b>Seuil</b> = sensibilité du récepteur (dBm)<br/><br/>
+          <b>Explication :</b> On additionne la puissance d'émission et les gains, puis on soustrait toutes les pertes et l'affaiblissement, et enfin on compare au seuil de sensibilité du récepteur.<br/>
+          <a href="#" className="text-blue-700 underline" target="_blank" rel="noopener">Voir le cours : Bilan de liaison FH</a>
+        </div>
+      )}
       <div className="mt-4 p-3 rounded bg-gray-100 text-sm">
         <strong>Recommandation :</strong> {recommandation}
       </div>

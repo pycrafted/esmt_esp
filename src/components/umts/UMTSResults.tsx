@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 interface UMTSResultsProps {
   area: number;
@@ -21,6 +21,7 @@ const UMTSResults: React.FC<UMTSResultsProps> = ({ area, users, voice, data, vid
   const capaciteUtileCellule = CAPACITE_CELLULE * facteurCharge;
   const nbCellules = Math.ceil(debitTotal / capaciteUtileCellule);
   const nbNodeB = Math.ceil(nbCellules / SECTEURS_PAR_NODEB);
+  const [showFormula, setShowFormula] = useState(false);
 
   let recommandation = 'Dimensionnement UMTS correct.';
   if (capaciteUtileCellule < 1000) {
@@ -82,6 +83,33 @@ const UMTSResults: React.FC<UMTSResultsProps> = ({ area, users, voice, data, vid
           </tr>
         </tbody>
       </table>
+      <button
+        onClick={() => setShowFormula((v) => !v)}
+        className="mt-3 mb-2 bg-blue-100 text-blue-800 px-3 py-1 rounded text-sm hover:bg-blue-200"
+      >
+        {showFormula ? 'Masquer la formule' : 'Voir la formule'}
+      </button>
+      {showFormula && (
+        <div className="mb-4 p-3 bg-blue-50 border-l-4 border-blue-400 rounded text-sm">
+          <b>Formule des débits :</b><br/>
+          <span className="font-mono">Débit<sub>voix</sub> = U × V</span><br/>
+          <span className="font-mono">Débit<sub>data</sub> = U × D</span><br/>
+          <span className="font-mono">Débit<sub>vidéo</sub> = U × Vi</span><br/>
+          où <b>U</b> = nombre d'utilisateurs, <b>V</b> = débit voix (kbps), <b>D</b> = débit data (kbps), <b>Vi</b> = débit vidéo (kbps)<br/><br/>
+          <b>Formule du débit total :</b><br/>
+          <span className="font-mono">Débit<sub>total</sub> = Débit<sub>voix</sub> + Débit<sub>data</sub> + Débit<sub>vidéo</sub></span><br/><br/>
+          <b>Formule de la capacité utile par cellule :</b><br/>
+          <span className="font-mono">Capacité<sub>utile</sub> = Capacité<sub>cellule</sub> × (Facteur de charge / 100)</span><br/>
+          où <b>Capacité<sub>cellule</sub></b> = capacité max d'une cellule (kbps)<br/><br/>
+          <b>Formule du nombre de cellules :</b><br/>
+          <span className="font-mono">Cellules = Débit<sub>total</sub> / Capacité<sub>utile</sub></span><br/><br/>
+          <b>Formule du nombre de NodeB :</b><br/>
+          <span className="font-mono">NodeB = Cellules / Secteurs<sub>NodeB</sub></span><br/>
+          où <b>Secteurs<sub>NodeB</sub></b> = nombre de secteurs par NodeB<br/><br/>
+          <b>Explication :</b> On additionne les besoins en débit de chaque service, on divise par la capacité utile d'une cellule, puis on déduit le nombre de cellules et de NodeB nécessaires.<br/>
+          <a href="#" className="text-blue-700 underline" target="_blank" rel="noopener">Voir le cours : Dimensionnement UMTS</a>
+        </div>
+      )}
       <div className="mt-4 p-3 rounded bg-gray-100 text-sm">
         <strong>Recommandation :</strong> {recommandation}
       </div>
