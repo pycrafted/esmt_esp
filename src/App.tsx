@@ -5,7 +5,7 @@ import HertzienForm from './components/hertzien/HertzienForm';
 import OptiqueForm from './components/optique/OptiqueForm';
 import UMTSForm from './components/umts/UMTSForm';
 import Dashboard from './components/dashboard/Dashboard';
-import Glossaire from './components/common/Glossaire';
+import Simulation from './components/simulation/Simulation';
 import './App.css';
 
 const DashboardPage = () => <Dashboard />;
@@ -25,7 +25,7 @@ function App() {
           <Route path="/umts" element={<UMTS />} />
           <Route path="/hertzien" element={<Hertzien />} />
           <Route path="/optique" element={<Optique />} />
-          <Route path="/glossaire" element={<Glossaire open={true} onClose={() => {}} />} />
+          <Route path="/simulation" element={<Simulation />} />
         </Routes>
       </Layout>
     </Router>

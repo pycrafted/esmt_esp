@@ -7,7 +7,7 @@ const navItems = [
   { to: '/umts', label: 'UMTS', icon: '📶' },
   { to: '/hertzien', label: 'Hertzien', icon: '📡' },
   { to: '/optique', label: 'Optique', icon: '💡' },
-  { to: '/application', label: 'Application', icon: '🧪' },
+  { to: '/simulation', label: 'simulation', icon: '🧪' },
 ];
 
 export const Sidebar: React.FC = () => {
