@@ -5,7 +5,7 @@ import HertzienForm from './components/hertzien/HertzienForm';
 import OptiqueForm from './components/optique/OptiqueForm';
 import UMTSForm from './components/umts/UMTSForm';
 import Dashboard from './components/dashboard/Dashboard';
-import Visualisation from './components/visualisation/Visualisation';
+import Simulation from './components/simulation/Simulation';
 
 import './App.css';
 
@@ -25,7 +25,7 @@ function App() {
           <Route path="/umts" element={<UMTS />} />
           <Route path="/hertzien" element={<Hertzien />} />
           <Route path="/optique" element={<Optique />} />
-          <Route path="/visualisation" element={<Visualisation/>}/>
+          <Route path="/visualisation" element={<Simulation/>}/>
         </Routes>
       </Layout>
     </Router>

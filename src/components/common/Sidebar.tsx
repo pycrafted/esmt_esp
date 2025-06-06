@@ -7,7 +7,7 @@ const navItems = [
   { label: 'UMTS', path: '/umts' },
   { label: 'Bilan Hertzien', path: '/hertzien' },
   { label: 'Bilan Optique', path: '/optique' },
-  {label:'visualisation',path:'/visualisation'}
+  {label:'simulation',path:'/simulation'}
 ];
 
 const Sidebar: React.FC = () => (
