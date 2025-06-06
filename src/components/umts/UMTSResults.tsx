@@ -50,74 +50,67 @@ const UMTSResults: React.FC<UMTSResultsProps> = ({ area, users, voice, data, vid
 
   return (
     <div className="mt-8">
-      <h3 className="text-lg font-semibold mb-4">Résultats du dimensionnement UMTS</h3>
-      <table className="min-w-full bg-white border rounded shadow">
-        <tbody>
-          <tr>
-            <td className="border px-4 py-2 font-medium">Débit total voix (kbps)</td>
-            <td className="border px-4 py-2">{debitVoix.toLocaleString()}</td>
-          </tr>
-          <tr>
-            <td className="border px-4 py-2 font-medium">Débit total data (kbps)</td>
-            <td className="border px-4 py-2">{debitData.toLocaleString()}</td>
-          </tr>
-          <tr>
-            <td className="border px-4 py-2 font-medium">Débit total vidéo (kbps)</td>
-            <td className="border px-4 py-2">{debitVideo.toLocaleString()}</td>
-          </tr>
-          <tr>
-            <td className="border px-4 py-2 font-medium">Débit total (kbps)</td>
-            <td className="border px-4 py-2">{debitTotal.toLocaleString()}</td>
-          </tr>
-          <tr>
-            <td className="border px-4 py-2 font-medium">Capacité utile par cellule (kbps)</td>
-            <td className="border px-4 py-2">{capaciteUtileCellule.toLocaleString(undefined, { maximumFractionDigits: 2 })}</td>
-          </tr>
-          <tr>
-            <td className="border px-4 py-2 font-medium">Nombre de cellules nécessaires</td>
-            <td className="border px-4 py-2">{nbCellules}</td>
-          </tr>
-          <tr>
-            <td className="border px-4 py-2 font-medium">Nombre de NodeB nécessaires</td>
-            <td className="border px-4 py-2">{nbNodeB}</td>
-          </tr>
-        </tbody>
-      </table>
-      <button
-        onClick={() => setShowFormula((v) => !v)}
-        className="mt-3 mb-2 bg-blue-100 text-blue-800 px-3 py-1 rounded text-sm hover:bg-blue-200"
-      >
-        {showFormula ? 'Masquer la formule' : 'Voir la formule'}
-      </button>
-      {showFormula && (
-        <div className="mb-4 p-3 bg-blue-50 border-l-4 border-blue-400 rounded text-sm">
-          <b>Formule des débits :</b><br/>
-          <span className="font-mono">Débit<sub>voix</sub> = U × V</span><br/>
-          <span className="font-mono">Débit<sub>data</sub> = U × D</span><br/>
-          <span className="font-mono">Débit<sub>vidéo</sub> = U × Vi</span><br/>
-          où <b>U</b> = nombre d'utilisateurs, <b>V</b> = débit voix (kbps), <b>D</b> = débit data (kbps), <b>Vi</b> = débit vidéo (kbps)<br/><br/>
-          <b>Formule du débit total :</b><br/>
-          <span className="font-mono">Débit<sub>total</sub> = Débit<sub>voix</sub> + Débit<sub>data</sub> + Débit<sub>vidéo</sub></span><br/><br/>
-          <b>Formule de la capacité utile par cellule :</b><br/>
-          <span className="font-mono">Capacité<sub>utile</sub> = Capacité<sub>cellule</sub> × (Facteur de charge / 100)</span><br/>
-          où <b>Capacité<sub>cellule</sub></b> = capacité max d'une cellule (kbps)<br/><br/>
-          <b>Formule du nombre de cellules :</b><br/>
-          <span className="font-mono">Cellules = Débit<sub>total</sub> / Capacité<sub>utile</sub></span><br/><br/>
-          <b>Formule du nombre de NodeB :</b><br/>
-          <span className="font-mono">NodeB = Cellules / Secteurs<sub>NodeB</sub></span><br/>
-          où <b>Secteurs<sub>NodeB</sub></b> = nombre de secteurs par NodeB<br/><br/>
-          <b>Explication :</b> On additionne les besoins en débit de chaque service, on divise par la capacité utile d'une cellule, puis on déduit le nombre de cellules et de NodeB nécessaires.<br/>
-          <a href="#" className="text-blue-700 underline" target="_blank" rel="noopener">Voir le cours : Dimensionnement UMTS</a>
+      <h3 className="text-xl font-bold mb-6 text-primary-dark">Résultats du dimensionnement UMTS</h3>
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-8">
+        <div className="bg-blue-50 rounded-xl shadow p-5 flex flex-col items-center hover:shadow-lg transition-shadow">
+          <span className="text-3xl font-bold text-primary mb-1">{debitVoix.toLocaleString()}</span>
+          <span className="text-gray-700 text-sm font-medium">Débit total voix (kbps)</span>
         </div>
-      )}
-      <div className="mt-4 p-3 rounded bg-gray-100 text-sm">
-        <strong>Recommandation :</strong> {recommandation}
+        <div className="bg-green-50 rounded-xl shadow p-5 flex flex-col items-center hover:shadow-lg transition-shadow">
+          <span className="text-3xl font-bold text-green-700 mb-1">{debitData.toLocaleString()}</span>
+          <span className="text-gray-700 text-sm font-medium">Débit total data (kbps)</span>
+        </div>
+        <div className="bg-pink-50 rounded-xl shadow p-5 flex flex-col items-center hover:shadow-lg transition-shadow">
+          <span className="text-3xl font-bold text-pink-700 mb-1">{debitVideo.toLocaleString()}</span>
+          <span className="text-gray-700 text-sm font-medium">Débit total vidéo (kbps)</span>
+        </div>
+        <div className="bg-yellow-50 rounded-xl shadow p-5 flex flex-col items-center hover:shadow-lg transition-shadow">
+          <span className="text-3xl font-bold text-yellow-600 mb-1">{debitTotal.toLocaleString()}</span>
+          <span className="text-gray-700 text-sm font-medium">Débit total (kbps)</span>
+        </div>
+        <div className="bg-purple-50 rounded-xl shadow p-5 flex flex-col items-center hover:shadow-lg transition-shadow">
+          <span className="text-3xl font-bold text-purple-700 mb-1">{capaciteUtileCellule.toLocaleString(undefined, { maximumFractionDigits: 2 })}</span>
+          <span className="text-gray-700 text-sm font-medium">Capacité utile par cellule (kbps)</span>
+        </div>
+        <div className="bg-orange-50 rounded-xl shadow p-5 flex flex-col items-center hover:shadow-lg transition-shadow">
+          <span className="text-3xl font-bold text-orange-600 mb-1">{nbCellules}</span>
+          <span className="text-gray-700 text-sm font-medium">Nombre de cellules nécessaires</span>
+        </div>
+        <div className="bg-teal-50 rounded-xl shadow p-5 flex flex-col items-center hover:shadow-lg transition-shadow">
+          <span className="text-3xl font-bold text-teal-700 mb-1">{nbNodeB}</span>
+          <span className="text-gray-700 text-sm font-medium">Nombre de NodeB nécessaires</span>
+        </div>
+      </div>
+      <div className="mb-6">
+        <button
+          onClick={() => setShowFormula((v) => !v)}
+          className="bg-blue-100 text-blue-800 px-4 py-2 rounded-lg text-sm font-semibold hover:bg-blue-200 transition-colors flex items-center gap-2 mb-3 focus:outline-none focus:ring-2 focus:ring-primary-light"
+        >
+          <span role="img" aria-label="Formule">🧮</span>
+          {showFormula ? 'Masquer la formule' : 'Voir la formule'}
+        </button>
+        {showFormula && (
+          <div className="mb-4 p-4 bg-blue-50 border-l-4 border-blue-400 rounded-xl shadow text-sm">
+            <b>Formule de la capacité utile par cellule :</b><br/>
+            <span className="font-mono">C<sub>utile</sub> = C<sub>cellule</sub> × Facteur de charge</span><br/>
+            <b>Formule du nombre de cellules :</b><br/>
+            <span className="font-mono">N<sub>cellules</sub> = Débit total / C<sub>utile</sub></span><br/>
+            <b>Formule du nombre de NodeB :</b><br/>
+            <span className="font-mono">N<sub>NodeB</sub> = N<sub>cellules</sub> / 3</span><br/>
+            <b>Explication :</b> On calcule la capacité utile par cellule, puis le nombre de cellules nécessaires, et enfin le nombre de NodeB à installer.<br/>
+            <a href="#" className="text-blue-700 underline" target="_blank" rel="noopener">Voir le cours : Dimensionnement UMTS</a>
+          </div>
+        )}
+      </div>
+      <div className="mb-6 p-4 rounded-xl bg-gray-100 shadow flex items-center gap-3">
+        <span className="text-2xl">💡</span>
+        <div className="text-sm text-gray-700"><strong>Recommandation :</strong> {recommandation}</div>
       </div>
       <button
         onClick={handleSave}
-        className="mt-4 bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 ml-2"
+        className="bg-primary text-white px-4 py-2 rounded-lg font-semibold hover:bg-primary-dark transition-colors flex items-center gap-2 focus:outline-none focus:ring-2 focus:ring-primary-light"
       >
-        Sauvegarder
+        <span role="img" aria-label="Sauvegarder">💾</span> Sauvegarder
       </button>
     </div>
   );

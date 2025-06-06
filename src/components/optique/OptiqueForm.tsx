@@ -55,12 +55,12 @@ const pedagogicHelp = {
 };
 
 const exampleValues: OptiqueFormValues = {
-  length: '20', // km
-  attenuation: '0.35', // dB/km
-  splices: '8', //
-  connectors: '2', //
-  losses: '1', // dB
-  power: '0', // dBm
+  length: '20',
+  attenuation: '0.35',
+  splices: '8',
+  connectors: '2',
+  losses: '1',
+  power: '0',
 };
 
 const scenarioPresets: { [key: string]: { values: OptiqueFormValues; msg: string } } = {
@@ -77,6 +77,16 @@ const scenarioPresets: { [key: string]: { values: OptiqueFormValues; msg: string
     msg: "Scénario campus : 2 km, atténuation 0.3 dB/km, 2 épissures, 2 connecteurs, pertes 0.5 dB, puissance 0 dBm. Liaison courte et performante."
   }
 };
+
+// Liste de termes pour le glossaire Optique
+const termesOptique = [
+  { id: 'fibre', terme: 'Fibre optique', definition: "Support de transmission utilisant la lumière pour transporter l'information à très haut débit.", exemple: 'Une fibre optique relie deux centraux sur 50 km.' },
+  { id: 'attenuation', terme: 'Atténuation', definition: "Perte de puissance d'un signal lors de sa transmission.", unite: 'dB', exemple: "Une fibre de 10 km à 0.35 dB/km a 3.5 dB d'atténuation." },
+  { id: 'bande', terme: 'Bande passante', definition: "Intervalle de fréquences qu'un système peut transmettre sans atténuation excessive.", unite: 'Hz', exemple: "La bande passante d'une fibre peut dépasser 10 GHz." },
+  { id: 'connecteur', terme: 'Connecteur', definition: "Dispositif permettant de raccorder deux fibres optiques.", exemple: 'Un connecteur SC ou LC.' },
+  { id: 'epissure', terme: 'Épissure', definition: "Jonction permanente entre deux fibres optiques.", exemple: 'Une épissure par fusion.' },
+  // Ajoute d'autres termes Optique ici
+];
 
 const OptiqueForm: React.FC<{ onSubmit?: (values: OptiqueFormValues) => void }> = ({ onSubmit }) => {
   const [values, setValues] = useState(initialValues);
@@ -178,188 +188,152 @@ const OptiqueForm: React.FC<{ onSubmit?: (values: OptiqueFormValues) => void }> 
 
   return (
     <>
-      <Glossaire open={showGlossaire} onClose={() => setShowGlossaire(false)} focusId={glossaireFocus} />
-      <form onSubmit={handleSubmit} className="max-w-lg mx-auto bg-white p-6 rounded shadow space-y-4">
-        <div className="mb-4 p-3 bg-blue-50 border-l-4 border-blue-400 rounded">
-          <div className="font-semibold mb-1">À quoi ça sert ?</div>
-          <div className="text-sm text-gray-700">
-            Le module <b>Optique</b> permet de calculer le budget de puissance d'une liaison fibre optique : estimation des pertes, vérification de la faisabilité et optimisation des paramètres d'installation.<br/>
-            <b>Cas d'usage :</b> conception d'une liaison optique, validation d'un budget de puissance, étude d'impact d'une modification de la longueur ou des composants.<br/>
-            <b>Lien avec la théorie :</b> ce module met en pratique les notions d'atténuation, de pertes et de budget optique vues en cours de transmission optique (voir chapitre "Budget de puissance optique").
-          </div>
+      <Glossaire open={showGlossaire} onClose={() => setShowGlossaire(false)} focusId={glossaireFocus} termes={termesOptique} />
+      <form onSubmit={handleSubmit} className="max-w-xl mx-auto bg-white p-8 rounded-2xl shadow-lg space-y-6 mt-8">
+        <div className="flex justify-end mb-2">
+          <button type="button" onClick={() => setShowGlossaire(true)} className="flex items-center gap-2 text-blue-700 bg-blue-100 hover:bg-blue-200 px-4 py-2 rounded-lg text-sm font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-primary-light">
+            <span role="img" aria-label="Glossaire">📖</span> Glossaire
+          </button>
         </div>
-        <h2 className="text-xl font-bold mb-4">Paramètres Bilan Optique</h2>
-        <div className="mb-2">
-          <label className="block text-sm font-medium mb-1">Scénario</label>
-          <select value={scenario} onChange={handleScenarioChange} className="w-full border rounded px-2 py-1 text-sm">
+        <h2 className="text-2xl font-bold text-primary-dark mb-2">Bilan Optique</h2>
+        <div className="mb-4">
+          <label className="block text-sm font-semibold mb-1 text-gray-700 flex items-center gap-1 group cursor-pointer">
+            Scénario prédéfini
+            <InfoBulle content={"Choisissez un scénario pour pré-remplir les champs avec des valeurs types."} className="group-hover:underline group-hover:text-primary-dark" />
+          </label>
+          <select value={scenario} onChange={handleScenarioChange} className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-primary-light focus:border-primary outline-none">
             <option value="">Choisir un scénario</option>
             <option value="urbaine">Fibre urbaine</option>
             <option value="longue">Longue distance</option>
             <option value="campus">Campus</option>
           </select>
         </div>
-        <button onClick={handleFillExample} className="mb-2 bg-green-100 text-green-800 px-3 py-1 rounded text-sm hover:bg-green-200">Remplir avec un exemple</button>
-        {exampleMsg && <div className="mb-2 text-xs text-green-700">{exampleMsg}</div>}
+        <button onClick={handleFillExample} className="mb-2 bg-success-light text-success-dark px-4 py-2 rounded-lg text-sm font-semibold hover:bg-success transition-colors w-full focus:outline-none focus:ring-2 focus:ring-success-light flex items-center gap-2">
+          <span role="img" aria-label="Exemple">✨</span> Remplir avec un exemple
+        </button>
+        {exampleMsg && <div className="mb-2 text-xs text-success-dark bg-success-light/40 rounded px-3 py-2">{exampleMsg}</div>}
         {/* Longueur de la liaison */}
-        <div>
-          <label className="block font-medium flex items-center gap-2">
+        <div className="space-y-1">
+          <label className="block text-sm font-medium text-gray-700 flex items-center gap-1 group cursor-pointer">
             Longueur de la liaison (km)
-            <InfoBulle content={<>
-              <b>Définition :</b> {pedagogicHelp.length.short}<br/>
-              <b>Unité :</b> km<br/>
-              <b>Exemple :</b> {pedagogicHelp.length.example}<br/>
-              <b>Impact :</b> {pedagogicHelp.length.why}
-            </>} glossaireId="fibre" onOpenGlossaire={handleOpenGlossaire} />
-            <button type="button" onClick={() => handleShowWhy('length')} className="text-blue-600 text-xs underline">Pourquoi ?</button>
+            <InfoBulle content={pedagogicHelp.length.why + ' ' + pedagogicHelp.length.example} className="group-hover:underline group-hover:text-primary-dark" />
           </label>
           <input
             type="number"
             name="length"
             value={values.length}
             onChange={handleChange}
-            className="mt-1 w-full border rounded px-3 py-2"
+            aria-invalid={!!errors.length}
+            className={`w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-colors ${errors.length ? 'border-red-500 bg-red-50' : 'border-gray-300'}`}
+            placeholder="Ex : 20"
           />
-          {showWhy['length'] && (
-            <div className="text-xs text-blue-700 mb-1">{pedagogicHelp.length.why}</div>
-          )}
-          <div className="text-xs text-gray-600 mt-1">{getDynamicComment('length')}</div>
-          {errors.length && <span className="text-red-600 text-sm">{errors.length}</span>}
+          {errors.length && <span className="text-red-600 text-xs flex items-center gap-1"><span role="img" aria-label="Erreur">⚠️</span>{errors.length}</span>}
+          <div className="text-xs text-gray-500">{getDynamicComment('length')}</div>
         </div>
         {/* Atténuation fibre */}
-        <div>
-          <label className="block font-medium flex items-center gap-2">
+        <div className="space-y-1">
+          <label className="block text-sm font-medium text-gray-700 flex items-center gap-1 group cursor-pointer">
             Atténuation fibre (dB/km)
-            <InfoBulle content={<>
-              <b>Définition :</b> {pedagogicHelp.attenuation.short}<br/>
-              <b>Unité :</b> dB/km<br/>
-              <b>Exemple :</b> {pedagogicHelp.attenuation.example}<br/>
-              <b>Impact :</b> {pedagogicHelp.attenuation.why}
-            </>} glossaireId="attenuation" onOpenGlossaire={handleOpenGlossaire} />
-            <button type="button" onClick={() => handleShowWhy('attenuation')} className="text-blue-600 text-xs underline">Pourquoi ?</button>
+            <InfoBulle content={pedagogicHelp.attenuation.why + ' ' + pedagogicHelp.attenuation.example} className="group-hover:underline group-hover:text-primary-dark" />
           </label>
           <input
             type="number"
             name="attenuation"
             value={values.attenuation}
             onChange={handleChange}
-            className="mt-1 w-full border rounded px-3 py-2"
+            aria-invalid={!!errors.attenuation}
+            className={`w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-colors ${errors.attenuation ? 'border-red-500 bg-red-50' : 'border-gray-300'}`}
+            placeholder="Ex : 0.35"
           />
-          {showWhy['attenuation'] && (
-            <div className="text-xs text-blue-700 mb-1">{pedagogicHelp.attenuation.why}</div>
-          )}
-          <div className="text-xs text-gray-600 mt-1">{getDynamicComment('attenuation')}</div>
-          {errors.attenuation && <span className="text-red-600 text-sm">{errors.attenuation}</span>}
+          {errors.attenuation && <span className="text-red-600 text-xs flex items-center gap-1"><span role="img" aria-label="Erreur">⚠️</span>{errors.attenuation}</span>}
+          <div className="text-xs text-gray-500">{getDynamicComment('attenuation')}</div>
         </div>
         {/* Nombre d'épissures */}
-        <div>
-          <label className="block font-medium flex items-center gap-2">
+        <div className="space-y-1">
+          <label className="block text-sm font-medium text-gray-700 flex items-center gap-1 group cursor-pointer">
             Nombre d'épissures
-            <InfoBulle content={<>
-              <b>Définition :</b> {pedagogicHelp.splices.short}<br/>
-              <b>Unité :</b> nombre<br/>
-              <b>Exemple :</b> {pedagogicHelp.splices.example}<br/>
-              <b>Impact :</b> {pedagogicHelp.splices.why}
-            </>} glossaireId="fibre" onOpenGlossaire={handleOpenGlossaire} />
-            <button type="button" onClick={() => handleShowWhy('splices')} className="text-blue-600 text-xs underline">Pourquoi ?</button>
+            <InfoBulle content={pedagogicHelp.splices.why + ' ' + pedagogicHelp.splices.example} className="group-hover:underline group-hover:text-primary-dark" />
           </label>
           <input
             type="number"
             name="splices"
             value={values.splices}
             onChange={handleChange}
-            className="mt-1 w-full border rounded px-3 py-2"
+            aria-invalid={!!errors.splices}
+            className={`w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-colors ${errors.splices ? 'border-red-500 bg-red-50' : 'border-gray-300'}`}
+            placeholder="Ex : 8"
           />
-          {showWhy['splices'] && (
-            <div className="text-xs text-blue-700 mb-1">{pedagogicHelp.splices.why}</div>
-          )}
-          <div className="text-xs text-gray-600 mt-1">{getDynamicComment('splices')}</div>
-          {errors.splices && <span className="text-red-600 text-sm">{errors.splices}</span>}
+          {errors.splices && <span className="text-red-600 text-xs flex items-center gap-1"><span role="img" aria-label="Erreur">⚠️</span>{errors.splices}</span>}
+          <div className="text-xs text-gray-500">{getDynamicComment('splices')}</div>
         </div>
         {/* Nombre de connecteurs */}
-        <div>
-          <label className="block font-medium flex items-center gap-2">
+        <div className="space-y-1">
+          <label className="block text-sm font-medium text-gray-700 flex items-center gap-1 group cursor-pointer">
             Nombre de connecteurs
-            <InfoBulle content={<>
-              <b>Définition :</b> {pedagogicHelp.connectors.short}<br/>
-              <b>Unité :</b> nombre<br/>
-              <b>Exemple :</b> {pedagogicHelp.connectors.example}<br/>
-              <b>Impact :</b> {pedagogicHelp.connectors.why}
-            </>} glossaireId="fibre" onOpenGlossaire={handleOpenGlossaire} />
-            <button type="button" onClick={() => handleShowWhy('connectors')} className="text-blue-600 text-xs underline">Pourquoi ?</button>
+            <InfoBulle content={pedagogicHelp.connectors.why + ' ' + pedagogicHelp.connectors.example} className="group-hover:underline group-hover:text-primary-dark" />
           </label>
           <input
             type="number"
             name="connectors"
             value={values.connectors}
             onChange={handleChange}
-            className="mt-1 w-full border rounded px-3 py-2"
+            aria-invalid={!!errors.connectors}
+            className={`w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-colors ${errors.connectors ? 'border-red-500 bg-red-50' : 'border-gray-300'}`}
+            placeholder="Ex : 2"
           />
-          {showWhy['connectors'] && (
-            <div className="text-xs text-blue-700 mb-1">{pedagogicHelp.connectors.why}</div>
-          )}
-          <div className="text-xs text-gray-600 mt-1">{getDynamicComment('connectors')}</div>
-          {errors.connectors && <span className="text-red-600 text-sm">{errors.connectors}</span>}
+          {errors.connectors && <span className="text-red-600 text-xs flex items-center gap-1"><span role="img" aria-label="Erreur">⚠️</span>{errors.connectors}</span>}
+          <div className="text-xs text-gray-500">{getDynamicComment('connectors')}</div>
         </div>
         {/* Pertes diverses */}
-        <div>
-          <label className="block font-medium flex items-center gap-2">
+        <div className="space-y-1">
+          <label className="block text-sm font-medium text-gray-700 flex items-center gap-1 group cursor-pointer">
             Pertes diverses (dB)
-            <InfoBulle content={<>
-              <b>Définition :</b> {pedagogicHelp.losses.short}<br/>
-              <b>Unité :</b> dB<br/>
-              <b>Exemple :</b> {pedagogicHelp.losses.example}<br/>
-              <b>Impact :</b> {pedagogicHelp.losses.why}
-            </>} glossaireId="attenuation" onOpenGlossaire={handleOpenGlossaire} />
-            <button type="button" onClick={() => handleShowWhy('losses')} className="text-blue-600 text-xs underline">Pourquoi ?</button>
+            <InfoBulle content={pedagogicHelp.losses.why + ' ' + pedagogicHelp.losses.example} className="group-hover:underline group-hover:text-primary-dark" />
           </label>
           <input
             type="number"
             name="losses"
             value={values.losses}
             onChange={handleChange}
-            className="mt-1 w-full border rounded px-3 py-2"
+            aria-invalid={!!errors.losses}
+            className={`w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-colors ${errors.losses ? 'border-red-500 bg-red-50' : 'border-gray-300'}`}
+            placeholder="Ex : 1"
           />
-          {showWhy['losses'] && (
-            <div className="text-xs text-blue-700 mb-1">{pedagogicHelp.losses.why}</div>
-          )}
-          <div className="text-xs text-gray-600 mt-1">{getDynamicComment('losses')}</div>
-          {errors.losses && <span className="text-red-600 text-sm">{errors.losses}</span>}
+          {errors.losses && <span className="text-red-600 text-xs flex items-center gap-1"><span role="img" aria-label="Erreur">⚠️</span>{errors.losses}</span>}
+          <div className="text-xs text-gray-500">{getDynamicComment('losses')}</div>
         </div>
         {/* Puissance émetteur */}
-        <div>
-          <label className="block font-medium flex items-center gap-2">
+        <div className="space-y-1">
+          <label className="block text-sm font-medium text-gray-700 flex items-center gap-1 group cursor-pointer">
             Puissance émetteur (dBm)
-            <InfoBulle content={<>
-              <b>Définition :</b> {pedagogicHelp.power.short}<br/>
-              <b>Unité :</b> dBm<br/>
-              <b>Exemple :</b> {pedagogicHelp.power.example}<br/>
-              <b>Impact :</b> {pedagogicHelp.power.why}
-            </>} glossaireId="dBm" onOpenGlossaire={handleOpenGlossaire} />
-            <button type="button" onClick={() => handleShowWhy('power')} className="text-blue-600 text-xs underline">Pourquoi ?</button>
+            <InfoBulle content={pedagogicHelp.power.why + ' ' + pedagogicHelp.power.example} className="group-hover:underline group-hover:text-primary-dark" />
           </label>
           <input
             type="number"
             name="power"
             value={values.power}
             onChange={handleChange}
-            className="mt-1 w-full border rounded px-3 py-2"
+            aria-invalid={!!errors.power}
+            className={`w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-colors ${errors.power ? 'border-red-500 bg-red-50' : 'border-gray-300'}`}
+            placeholder="Ex : 0"
           />
-          {showWhy['power'] && (
-            <div className="text-xs text-blue-700 mb-1">{pedagogicHelp.power.why}</div>
-          )}
-          <div className="text-xs text-gray-600 mt-1">{getDynamicComment('power')}</div>
-          {errors.power && <span className="text-red-600 text-sm">{errors.power}</span>}
+          {errors.power && <span className="text-red-600 text-xs flex items-center gap-1"><span role="img" aria-label="Erreur">⚠️</span>{errors.power}</span>}
+          <div className="text-xs text-gray-500">{getDynamicComment('power')}</div>
         </div>
-        <button type="submit" className="bg-blue-700 text-white px-4 py-2 rounded hover:bg-blue-800">Calculer</button>
+        <button type="submit" className="w-full bg-primary text-white px-4 py-2 rounded-lg font-semibold text-lg mt-4 hover:bg-primary-dark transition-colors shadow focus:outline-none focus:ring-2 focus:ring-primary-light flex items-center gap-2">
+          <span role="img" aria-label="Calculer">🧮</span> Calculer
+        </button>
         {showResults && (
-          <OptiqueResults
-            length={Number(values.length)}
-            attenuation={Number(values.attenuation)}
-            splices={Number(values.splices)}
-            connectors={Number(values.connectors)}
-            losses={Number(values.losses)}
-            power={Number(values.power)}
-          />
+          <div className="mt-8">
+            <OptiqueResults
+              length={Number(values.length)}
+              attenuation={Number(values.attenuation)}
+              splices={Number(values.splices)}
+              connectors={Number(values.connectors)}
+              losses={Number(values.losses)}
+              power={Number(values.power)}
+            />
+          </div>
         )}
       </form>
     </>

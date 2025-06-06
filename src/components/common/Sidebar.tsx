@@ -2,35 +2,35 @@ import React from 'react';
 import { NavLink } from 'react-router-dom';
 
 const navItems = [
-  { label: 'Dashboard', path: '/' },
-  { label: 'GSM', path: '/gsm' },
-  { label: 'UMTS', path: '/umts' },
-  { label: 'Bilan Hertzien', path: '/hertzien' },
-  { label: 'Bilan Optique', path: '/optique' },
+  { to: '/dashboard', label: 'Dashboard', icon: '📊' },
+  { to: '/gsm', label: 'GSM', icon: '📱' },
+  { to: '/umts', label: 'UMTS', icon: '📶' },
+  { to: '/hertzien', label: 'Hertzien', icon: '📡' },
+  { to: '/optique', label: 'Optique', icon: '💡' },
+  { to: '/application', label: 'Application', icon: '🧪' },
 ];
 
-const Sidebar: React.FC = () => (
-  <aside className="bg-blue-100 w-56 min-h-screen p-4 flex flex-col gap-4 shadow-md">
-    <nav>
-      <ul className="space-y-2">
+export const Sidebar: React.FC = () => {
+  return (
+    <aside className="fixed left-0 inset-y-0 w-60 bg-primary-dark text-white flex flex-col justify-between py-8 shadow-2xl font-sans border-r border-primary z-30">
+      <nav className="flex flex-col gap-3">
         {navItems.map((item) => (
-          <li key={item.path}>
-            <NavLink
-              to={item.path}
-              className={({ isActive }) =>
-                `block px-3 py-2 rounded font-medium ${
-                  isActive ? 'bg-blue-700 text-white' : 'hover:bg-blue-200 text-blue-900'
-                }`
-              }
-              end={item.path === '/'}
-            >
-              {item.label}
-            </NavLink>
-          </li>
+          <NavLink
+            key={item.to}
+            to={item.to}
+            className={({ isActive }) =>
+              `group flex items-center gap-4 px-7 py-3 rounded-l-full transition-colors duration-200 text-lg font-semibold outline-none focus-visible:ring-2 focus-visible:ring-white/80
+              ${isActive ? 'bg-primary text-white shadow-lg' : 'text-gray-100 hover:bg-primary-light/90 hover:text-white'}`
+            }
+            aria-label={item.label}
+          >
+            <span className="text-2xl transition-transform group-hover:scale-110 group-active:scale-95">{item.icon}</span>
+            <span className="tracking-tight">{item.label}</span>
+          </NavLink>
         ))}
-      </ul>
-    </nav>
-  </aside>
-);
+      </nav>
+    </aside>
+  );
+};
 
 export default Sidebar; 

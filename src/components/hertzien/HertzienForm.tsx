@@ -62,13 +62,13 @@ const pedagogicHelp = {
 };
 
 const exampleValues: HertzienFormValues = {
-  frequency: '7', // GHz
-  distance: '15', // km
-  power: '20', // dBm
-  gainTx: '20', // dBi
-  gainRx: '20', // dBi
-  losses: '2', // dB
-  threshold: '-90', // dBm
+  frequency: '7',
+  distance: '15',
+  power: '20',
+  gainTx: '20',
+  gainRx: '20',
+  losses: '2',
+  threshold: '-90',
 };
 
 const scenarioPresets: { [key: string]: { values: HertzienFormValues; msg: string } } = {
@@ -85,6 +85,17 @@ const scenarioPresets: { [key: string]: { values: HertzienFormValues; msg: strin
     msg: "Scénario montagne : 30 km, 2 GHz, puissance 25 dBm, gains 25 dBi, pertes 3 dB, seuil -95 dBm. Longue distance, basse fréquence, conditions difficiles."
   }
 };
+
+// Liste de termes pour le glossaire Hertzien
+const termesFH = [
+  { id: 'fh', terme: 'FH', definition: "Faisceau Hertzien : liaison radio point à point utilisée pour relier deux sites distants.", exemple: 'Un FH relie deux BTS sur 15 km.' },
+  { id: 'dBm', terme: 'dBm', definition: "Décibel-milliwatt : unité de puissance exprimée en décibels par rapport à 1 mW.", unite: 'dBm', exemple: '20 dBm = 100 mW.' },
+  { id: 'dBi', terme: 'dBi', definition: "Décibel-isotrope : unité de gain d'antenne par rapport à une antenne isotrope.", unite: 'dBi', exemple: 'Une antenne directive peut avoir 20 dBi de gain.' },
+  { id: 'gain', terme: 'Gain', definition: "Augmentation de la puissance d'un signal par un dispositif (ex : antenne).", unite: 'dBi', exemple: 'Un gain de 15 dBi double la portée par rapport à 12 dBi.' },
+  { id: 'seuil', terme: 'Seuil', definition: "Sensibilité minimale d'un récepteur pour détecter un signal.", unite: 'dBm', exemple: 'Un seuil de -90 dBm est courant pour un récepteur FH.' },
+  { id: 'modulation', terme: 'Modulation', definition: "Technique permettant de transporter un signal sur une porteuse (ex : QAM, FSK, OFDM).", exemple: 'La 3G utilise la modulation WCDMA.' },
+  // Ajoute d'autres termes FH ici
+];
 
 const HertzienForm: React.FC<{ onSubmit?: (values: HertzienFormValues) => void }> = ({ onSubmit }) => {
   const [values, setValues] = useState(initialValues);
@@ -187,214 +198,171 @@ const HertzienForm: React.FC<{ onSubmit?: (values: HertzienFormValues) => void }
 
   return (
     <>
-      <Glossaire open={showGlossaire} onClose={() => setShowGlossaire(false)} focusId={glossaireFocus} />
-      <form onSubmit={handleSubmit} className="max-w-lg mx-auto bg-white p-6 rounded shadow space-y-4">
-        <div className="mb-4 p-3 bg-blue-50 border-l-4 border-blue-400 rounded">
-          <div className="font-semibold mb-1">À quoi ça sert ?</div>
-          <div className="text-sm text-gray-700">
-            Le module <b>Hertzien</b> permet de réaliser le bilan de liaison d'un faisceau hertzien (FH) : calcul de la marge, des pertes et de la faisabilité d'une liaison point à point.<br/>
-            <b>Cas d'usage :</b> conception d'un lien FH, vérification de la faisabilité d'une liaison, optimisation des paramètres radio.<br/>
-            <b>Lien avec la théorie :</b> ce module met en pratique les notions d'affaiblissement, de bilan de liaison et de propagation vues en cours de transmission hertzienne (voir chapitre "Bilan de liaison FH").
-          </div>
+      <Glossaire open={showGlossaire} onClose={() => setShowGlossaire(false)} focusId={glossaireFocus} termes={termesFH} />
+      <form onSubmit={handleSubmit} className="max-w-xl mx-auto bg-white p-8 rounded-2xl shadow-lg space-y-6 mt-8">
+        <div className="flex justify-end mb-2">
+          <button type="button" onClick={() => setShowGlossaire(true)} className="flex items-center gap-2 text-blue-700 bg-blue-100 hover:bg-blue-200 px-4 py-2 rounded-lg text-sm font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-primary-light">
+            <span role="img" aria-label="Glossaire">📖</span> Glossaire
+          </button>
         </div>
-        <h2 className="text-xl font-bold mb-4">Paramètres Bilan Hertzien</h2>
-        <div className="mb-2">
-          <label className="block text-sm font-medium mb-1">Scénario</label>
-          <select value={scenario} onChange={handleScenarioChange} className="w-full border rounded px-2 py-1 text-sm">
+        <h2 className="text-2xl font-bold text-primary-dark mb-2">Bilan de Liaison Hertzien</h2>
+        <div className="mb-4">
+          <label className="block text-sm font-semibold mb-1 text-gray-700 flex items-center gap-1 group cursor-pointer">
+            Scénario prédéfini
+            <InfoBulle content={"Choisissez un scénario pour pré-remplir les champs avec des valeurs types."} className="group-hover:underline group-hover:text-primary-dark" />
+          </label>
+          <select value={scenario} onChange={handleScenarioChange} className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-primary-light focus:border-primary outline-none">
             <option value="">Choisir un scénario</option>
             <option value="urbain">Urbain</option>
             <option value="interurbain">Interurbain</option>
             <option value="montagne">Montagne</option>
           </select>
         </div>
-        <button onClick={handleFillExample} className="mb-2 bg-green-100 text-green-800 px-3 py-1 rounded text-sm hover:bg-green-200">Remplir avec un exemple</button>
-        {exampleMsg && <div className="mb-2 text-xs text-green-700">{exampleMsg}</div>}
+        <button onClick={handleFillExample} className="mb-2 bg-success-light text-success-dark px-4 py-2 rounded-lg text-sm font-semibold hover:bg-success transition-colors w-full focus:outline-none focus:ring-2 focus:ring-success-light flex items-center gap-2">
+          <span role="img" aria-label="Exemple">✨</span> Remplir avec un exemple
+        </button>
+        {exampleMsg && <div className="mb-2 text-xs text-success-dark bg-success-light/40 rounded px-3 py-2">{exampleMsg}</div>}
         {/* Fréquence */}
-        <div>
-          <label className="block font-medium flex items-center gap-2">
+        <div className="space-y-1">
+          <label className="block text-sm font-medium text-gray-700 flex items-center gap-1 group cursor-pointer">
             Fréquence (GHz)
-            <InfoBulle content={<>
-              <b>Définition :</b> {pedagogicHelp.frequency.short}<br/>
-              <b>Unité :</b> GHz<br/>
-              <b>Exemple :</b> {pedagogicHelp.frequency.example}<br/>
-              <b>Impact :</b> {pedagogicHelp.frequency.why}
-            </>} glossaireId="fh" onOpenGlossaire={handleOpenGlossaire} />
-            <button type="button" onClick={() => handleShowWhy('frequency')} className="text-blue-600 text-xs underline">Pourquoi ?</button>
+            <InfoBulle content={pedagogicHelp.frequency.why + ' ' + pedagogicHelp.frequency.example} className="group-hover:underline group-hover:text-primary-dark" />
           </label>
           <input
             type="number"
             name="frequency"
             value={values.frequency}
             onChange={handleChange}
-            className="mt-1 w-full border rounded px-3 py-2"
+            aria-invalid={!!errors.frequency}
+            className={`w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-colors ${errors.frequency ? 'border-red-500 bg-red-50' : 'border-gray-300'}`}
+            placeholder="Ex : 7"
           />
-          {showWhy['frequency'] && (
-            <div className="text-xs text-blue-700 mb-1">{pedagogicHelp.frequency.why}</div>
-          )}
-          <div className="text-xs text-gray-600 mt-1">{getDynamicComment('frequency')}</div>
-          {errors.frequency && <span className="text-red-600 text-sm">{errors.frequency}</span>}
+          {errors.frequency && <span className="text-red-600 text-xs flex items-center gap-1"><span role="img" aria-label="Erreur">⚠️</span>{errors.frequency}</span>}
+          <div className="text-xs text-gray-500">{getDynamicComment('frequency')}</div>
         </div>
         {/* Distance */}
-        <div>
-          <label className="block font-medium flex items-center gap-2">
+        <div className="space-y-1">
+          <label className="block text-sm font-medium text-gray-700 flex items-center gap-1 group cursor-pointer">
             Distance (km)
-            <InfoBulle content={<>
-              <b>Définition :</b> {pedagogicHelp.distance.short}<br/>
-              <b>Unité :</b> km<br/>
-              <b>Exemple :</b> {pedagogicHelp.distance.example}<br/>
-              <b>Impact :</b> {pedagogicHelp.distance.why}
-            </>} glossaireId="fh" onOpenGlossaire={handleOpenGlossaire} />
-            <button type="button" onClick={() => handleShowWhy('distance')} className="text-blue-600 text-xs underline">Pourquoi ?</button>
+            <InfoBulle content={pedagogicHelp.distance.why + ' ' + pedagogicHelp.distance.example} className="group-hover:underline group-hover:text-primary-dark" />
           </label>
           <input
             type="number"
             name="distance"
             value={values.distance}
             onChange={handleChange}
-            className="mt-1 w-full border rounded px-3 py-2"
+            aria-invalid={!!errors.distance}
+            className={`w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-colors ${errors.distance ? 'border-red-500 bg-red-50' : 'border-gray-300'}`}
+            placeholder="Ex : 15"
           />
-          {showWhy['distance'] && (
-            <div className="text-xs text-blue-700 mb-1">{pedagogicHelp.distance.why}</div>
-          )}
-          <div className="text-xs text-gray-600 mt-1">{getDynamicComment('distance')}</div>
-          {errors.distance && <span className="text-red-600 text-sm">{errors.distance}</span>}
+          {errors.distance && <span className="text-red-600 text-xs flex items-center gap-1"><span role="img" aria-label="Erreur">⚠️</span>{errors.distance}</span>}
+          <div className="text-xs text-gray-500">{getDynamicComment('distance')}</div>
         </div>
         {/* Puissance émission */}
-        <div>
-          <label className="block font-medium flex items-center gap-2">
+        <div className="space-y-1">
+          <label className="block text-sm font-medium text-gray-700 flex items-center gap-1 group cursor-pointer">
             Puissance émission (dBm)
-            <InfoBulle content={<>
-              <b>Définition :</b> {pedagogicHelp.power.short}<br/>
-              <b>Unité :</b> dBm<br/>
-              <b>Exemple :</b> {pedagogicHelp.power.example}<br/>
-              <b>Impact :</b> {pedagogicHelp.power.why}
-            </>} glossaireId="dBm" onOpenGlossaire={handleOpenGlossaire} />
-            <button type="button" onClick={() => handleShowWhy('power')} className="text-blue-600 text-xs underline">Pourquoi ?</button>
+            <InfoBulle content={pedagogicHelp.power.why + ' ' + pedagogicHelp.power.example} className="group-hover:underline group-hover:text-primary-dark" />
           </label>
           <input
             type="number"
             name="power"
             value={values.power}
             onChange={handleChange}
-            className="mt-1 w-full border rounded px-3 py-2"
+            aria-invalid={!!errors.power}
+            className={`w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-colors ${errors.power ? 'border-red-500 bg-red-50' : 'border-gray-300'}`}
+            placeholder="Ex : 20"
           />
-          {showWhy['power'] && (
-            <div className="text-xs text-blue-700 mb-1">{pedagogicHelp.power.why}</div>
-          )}
-          <div className="text-xs text-gray-600 mt-1">{getDynamicComment('power')}</div>
-          {errors.power && <span className="text-red-600 text-sm">{errors.power}</span>}
+          {errors.power && <span className="text-red-600 text-xs flex items-center gap-1"><span role="img" aria-label="Erreur">⚠️</span>{errors.power}</span>}
+          <div className="text-xs text-gray-500">{getDynamicComment('power')}</div>
         </div>
-        {/* Gain antenne émission */}
-        <div>
-          <label className="block font-medium flex items-center gap-2">
-            Gain antenne émission (dBi)
-            <InfoBulle content={<>
-              <b>Définition :</b> {pedagogicHelp.gainTx.short}<br/>
-              <b>Unité :</b> dBi<br/>
-              <b>Exemple :</b> {pedagogicHelp.gainTx.example}<br/>
-              <b>Impact :</b> {pedagogicHelp.gainTx.why}
-            </>} glossaireId="gain" onOpenGlossaire={handleOpenGlossaire} />
-            <button type="button" onClick={() => handleShowWhy('gainTx')} className="text-blue-600 text-xs underline">Pourquoi ?</button>
+        {/* Gain émission */}
+        <div className="space-y-1">
+          <label className="block text-sm font-medium text-gray-700 flex items-center gap-1 group cursor-pointer">
+            Gain émission (dBi)
+            <InfoBulle content={pedagogicHelp.gainTx.why + ' ' + pedagogicHelp.gainTx.example} className="group-hover:underline group-hover:text-primary-dark" />
           </label>
           <input
             type="number"
             name="gainTx"
             value={values.gainTx}
             onChange={handleChange}
-            className="mt-1 w-full border rounded px-3 py-2"
+            aria-invalid={!!errors.gainTx}
+            className={`w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-colors ${errors.gainTx ? 'border-red-500 bg-red-50' : 'border-gray-300'}`}
+            placeholder="Ex : 20"
           />
-          {showWhy['gainTx'] && (
-            <div className="text-xs text-blue-700 mb-1">{pedagogicHelp.gainTx.why}</div>
-          )}
-          <div className="text-xs text-gray-600 mt-1">{getDynamicComment('gainTx')}</div>
-          {errors.gainTx && <span className="text-red-600 text-sm">{errors.gainTx}</span>}
+          {errors.gainTx && <span className="text-red-600 text-xs flex items-center gap-1"><span role="img" aria-label="Erreur">⚠️</span>{errors.gainTx}</span>}
+          <div className="text-xs text-gray-500">{getDynamicComment('gainTx')}</div>
         </div>
-        {/* Gain antenne réception */}
-        <div>
-          <label className="block font-medium flex items-center gap-2">
-            Gain antenne réception (dBi)
-            <InfoBulle content={<>
-              <b>Définition :</b> {pedagogicHelp.gainRx.short}<br/>
-              <b>Unité :</b> dBi<br/>
-              <b>Exemple :</b> {pedagogicHelp.gainRx.example}<br/>
-              <b>Impact :</b> {pedagogicHelp.gainRx.why}
-            </>} glossaireId="gain" onOpenGlossaire={handleOpenGlossaire} />
-            <button type="button" onClick={() => handleShowWhy('gainRx')} className="text-blue-600 text-xs underline">Pourquoi ?</button>
+        {/* Gain réception */}
+        <div className="space-y-1">
+          <label className="block text-sm font-medium text-gray-700 flex items-center gap-1 group cursor-pointer">
+            Gain réception (dBi)
+            <InfoBulle content={pedagogicHelp.gainRx.why + ' ' + pedagogicHelp.gainRx.example} className="group-hover:underline group-hover:text-primary-dark" />
           </label>
           <input
             type="number"
             name="gainRx"
             value={values.gainRx}
             onChange={handleChange}
-            className="mt-1 w-full border rounded px-3 py-2"
+            aria-invalid={!!errors.gainRx}
+            className={`w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-colors ${errors.gainRx ? 'border-red-500 bg-red-50' : 'border-gray-300'}`}
+            placeholder="Ex : 20"
           />
-          {showWhy['gainRx'] && (
-            <div className="text-xs text-blue-700 mb-1">{pedagogicHelp.gainRx.why}</div>
-          )}
-          <div className="text-xs text-gray-600 mt-1">{getDynamicComment('gainRx')}</div>
-          {errors.gainRx && <span className="text-red-600 text-sm">{errors.gainRx}</span>}
+          {errors.gainRx && <span className="text-red-600 text-xs flex items-center gap-1"><span role="img" aria-label="Erreur">⚠️</span>{errors.gainRx}</span>}
+          <div className="text-xs text-gray-500">{getDynamicComment('gainRx')}</div>
         </div>
         {/* Pertes diverses */}
-        <div>
-          <label className="block font-medium flex items-center gap-2">
+        <div className="space-y-1">
+          <label className="block text-sm font-medium text-gray-700 flex items-center gap-1 group cursor-pointer">
             Pertes diverses (dB)
-            <InfoBulle content={<>
-              <b>Définition :</b> {pedagogicHelp.losses.short}<br/>
-              <b>Unité :</b> dB<br/>
-              <b>Exemple :</b> {pedagogicHelp.losses.example}<br/>
-              <b>Impact :</b> {pedagogicHelp.losses.why}
-            </>} glossaireId="attenuation" onOpenGlossaire={handleOpenGlossaire} />
-            <button type="button" onClick={() => handleShowWhy('losses')} className="text-blue-600 text-xs underline">Pourquoi ?</button>
+            <InfoBulle content={pedagogicHelp.losses.why + ' ' + pedagogicHelp.losses.example} className="group-hover:underline group-hover:text-primary-dark" />
           </label>
           <input
             type="number"
             name="losses"
             value={values.losses}
             onChange={handleChange}
-            className="mt-1 w-full border rounded px-3 py-2"
+            aria-invalid={!!errors.losses}
+            className={`w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-colors ${errors.losses ? 'border-red-500 bg-red-50' : 'border-gray-300'}`}
+            placeholder="Ex : 2"
           />
-          {showWhy['losses'] && (
-            <div className="text-xs text-blue-700 mb-1">{pedagogicHelp.losses.why}</div>
-          )}
-          <div className="text-xs text-gray-600 mt-1">{getDynamicComment('losses')}</div>
-          {errors.losses && <span className="text-red-600 text-sm">{errors.losses}</span>}
+          {errors.losses && <span className="text-red-600 text-xs flex items-center gap-1"><span role="img" aria-label="Erreur">⚠️</span>{errors.losses}</span>}
+          <div className="text-xs text-gray-500">{getDynamicComment('losses')}</div>
         </div>
         {/* Seuil de réception */}
-        <div>
-          <label className="block font-medium flex items-center gap-2">
+        <div className="space-y-1">
+          <label className="block text-sm font-medium text-gray-700 flex items-center gap-1 group cursor-pointer">
             Seuil de réception (dBm)
-            <InfoBulle content={<>
-              <b>Définition :</b> {pedagogicHelp.threshold.short}<br/>
-              <b>Unité :</b> dBm<br/>
-              <b>Exemple :</b> {pedagogicHelp.threshold.example}<br/>
-              <b>Impact :</b> {pedagogicHelp.threshold.why}
-            </>} glossaireId="seuil" onOpenGlossaire={handleOpenGlossaire} />
-            <button type="button" onClick={() => handleShowWhy('threshold')} className="text-blue-600 text-xs underline">Pourquoi ?</button>
+            <InfoBulle content={pedagogicHelp.threshold.why + ' ' + pedagogicHelp.threshold.example} className="group-hover:underline group-hover:text-primary-dark" />
           </label>
           <input
             type="number"
             name="threshold"
             value={values.threshold}
             onChange={handleChange}
-            className="mt-1 w-full border rounded px-3 py-2"
+            aria-invalid={!!errors.threshold}
+            className={`w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-colors ${errors.threshold ? 'border-red-500 bg-red-50' : 'border-gray-300'}`}
+            placeholder="Ex : -90"
           />
-          {showWhy['threshold'] && (
-            <div className="text-xs text-blue-700 mb-1">{pedagogicHelp.threshold.why}</div>
-          )}
-          <div className="text-xs text-gray-600 mt-1">{getDynamicComment('threshold')}</div>
-          {errors.threshold && <span className="text-red-600 text-sm">{errors.threshold}</span>}
+          {errors.threshold && <span className="text-red-600 text-xs flex items-center gap-1"><span role="img" aria-label="Erreur">⚠️</span>{errors.threshold}</span>}
+          <div className="text-xs text-gray-500">{getDynamicComment('threshold')}</div>
         </div>
-        <button type="submit" className="bg-blue-700 text-white px-4 py-2 rounded hover:bg-blue-800">Calculer</button>
+        <button type="submit" className="w-full bg-primary text-white px-4 py-2 rounded-lg font-semibold text-lg mt-4 hover:bg-primary-dark transition-colors shadow focus:outline-none focus:ring-2 focus:ring-primary-light flex items-center gap-2">
+          <span role="img" aria-label="Calculer">🧮</span> Calculer
+        </button>
         {showResults && (
-          <HertzienResults
-            frequency={Number(values.frequency)}
-            distance={Number(values.distance)}
-            power={Number(values.power)}
-            gainTx={Number(values.gainTx)}
-            gainRx={Number(values.gainRx)}
-            losses={Number(values.losses)}
-            threshold={Number(values.threshold)}
-          />
+          <div className="mt-8">
+            <HertzienResults
+              frequency={Number(values.frequency)}
+              distance={Number(values.distance)}
+              power={Number(values.power)}
+              gainTx={Number(values.gainTx)}
+              gainRx={Number(values.gainRx)}
+              losses={Number(values.losses)}
+              threshold={Number(values.threshold)}
+            />
+          </div>
         )}
       </form>
     </>

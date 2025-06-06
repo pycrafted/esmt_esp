@@ -197,134 +197,145 @@ const Dashboard: React.FC = () => {
           </BarChart>
         </ResponsiveContainer>
       </div>
-      <div className="mt-10">
-        <h3 className="text-lg font-semibold mb-2">Historique des calculs GSM</h3>
-        {gsmHistory.length === 0 ? (
-          <div className="text-gray-500">Aucun calcul GSM sauvegardé pour le moment.</div>
-        ) : (
-          <table className="min-w-full bg-white border rounded shadow text-sm">
-            <thead>
-              <tr>
-                <th className="border px-2 py-1">Date</th>
-                <th className="border px-2 py-1">Abonnés</th>
-                <th className="border px-2 py-1">Sites</th>
-                <th className="border px-2 py-1">TRX</th>
-                <th className="border px-2 py-1">Trafic (Erlangs)</th>
-              </tr>
-            </thead>
-            <tbody>
-              {gsmHistory.slice(0, 5).map((entry, idx) => (
-                <tr key={idx}>
-                  <td className="border px-2 py-1">{new Date(entry.date).toLocaleString()}</td>
-                  <td className="border px-2 py-1">{entry.nbAbonnes.toLocaleString()}</td>
-                  <td className="border px-2 py-1">{entry.nbSites}</td>
-                  <td className="border px-2 py-1">{entry.nbTRX}</td>
-                  <td className="border px-2 py-1">{entry.traficTotal.toLocaleString(undefined, { maximumFractionDigits: 2 })}</td>
+      {/* Bloc unique pour tous les historiques */}
+      <div className="bg-white rounded-xl shadow p-6 mb-8 mt-10">
+        <h3 className="text-xl font-bold text-primary-dark mb-4">Historique des calculs</h3>
+        {/* GSM */}
+        <div className="mb-6">
+          <h4 className="text-lg font-semibold mb-2 text-blue-700">GSM</h4>
+          {gsmHistory.length === 0 ? (
+            <div className="text-gray-500">Aucun calcul GSM sauvegardé pour le moment.</div>
+          ) : (
+            <table className="min-w-full bg-white border rounded shadow text-sm mb-2">
+              <thead>
+                <tr>
+                  <th className="border px-2 py-1">Date</th>
+                  <th className="border px-2 py-1">Abonnés</th>
+                  <th className="border px-2 py-1">Sites</th>
+                  <th className="border px-2 py-1">TRX</th>
+                  <th className="border px-2 py-1">Trafic (Erlangs)</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        )}
-      </div>
-      <div className="mt-10">
-        <h3 className="text-lg font-semibold mb-2">Historique des calculs Hertzien</h3>
-        {hertzienHistory.length === 0 ? (
-          <div className="text-gray-500">Aucun calcul hertzien sauvegardé pour le moment.</div>
-        ) : (
-          <table className="min-w-full bg-white border rounded shadow text-sm">
-            <thead>
-              <tr>
-                <th className="border px-2 py-1">Date</th>
-                <th className="border px-2 py-1">Affaiblissement (dB)</th>
-                <th className="border px-2 py-1">Bilan (dB)</th>
-                <th className="border px-2 py-1">Marge (dB)</th>
-              </tr>
-            </thead>
-            <tbody>
-              {hertzienHistory.slice(0, 5).map((entry, idx) => (
-                <tr key={idx}>
-                  <td className="border px-2 py-1">{new Date(entry.date).toLocaleString()}</td>
-                  <td className="border px-2 py-1">{entry.affaiblissement.toLocaleString(undefined, { maximumFractionDigits: 2 })}</td>
-                  <td className="border px-2 py-1">{entry.bilan.toLocaleString(undefined, { maximumFractionDigits: 2 })}</td>
-                  <td className="border px-2 py-1">{entry.marge.toLocaleString(undefined, { maximumFractionDigits: 2 })}</td>
+              </thead>
+              <tbody>
+                {gsmHistory.slice(0, 5).map((entry, idx) => (
+                  <tr key={idx}>
+                    <td className="border px-2 py-1">{new Date(entry.date).toLocaleString()}</td>
+                    <td className="border px-2 py-1">{entry.nbAbonnes.toLocaleString()}</td>
+                    <td className="border px-2 py-1">{entry.nbSites}</td>
+                    <td className="border px-2 py-1">{entry.nbTRX}</td>
+                    <td className="border px-2 py-1">{entry.traficTotal.toLocaleString(undefined, { maximumFractionDigits: 2 })}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          )}
+        </div>
+        <hr className="my-4 border-gray-200" />
+        {/* Hertzien */}
+        <div className="mb-6">
+          <h4 className="text-lg font-semibold mb-2 text-teal-700">Hertzien</h4>
+          {hertzienHistory.length === 0 ? (
+            <div className="text-gray-500">Aucun calcul hertzien sauvegardé pour le moment.</div>
+          ) : (
+            <table className="min-w-full bg-white border rounded shadow text-sm mb-2">
+              <thead>
+                <tr>
+                  <th className="border px-2 py-1">Date</th>
+                  <th className="border px-2 py-1">Affaiblissement (dB)</th>
+                  <th className="border px-2 py-1">Bilan (dB)</th>
+                  <th className="border px-2 py-1">Marge (dB)</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        )}
-      </div>
-      <div className="mt-10">
-        <h3 className="text-lg font-semibold mb-2">Historique des calculs Optique</h3>
-        {optiqueHistory.length === 0 ? (
-          <div className="text-gray-500">Aucun calcul optique sauvegardé pour le moment.</div>
-        ) : (
-          <table className="min-w-full bg-white border rounded shadow text-sm">
-            <thead>
-              <tr>
-                <th className="border px-2 py-1">Date</th>
-                <th className="border px-2 py-1">Att. fibre (dB)</th>
-                <th className="border px-2 py-1">Pertes totales (dB)</th>
-                <th className="border px-2 py-1">Bilan (dBm)</th>
-              </tr>
-            </thead>
-            <tbody>
-              {optiqueHistory.slice(0, 5).map((entry, idx) => (
-                <tr key={idx}>
-                  <td className="border px-2 py-1">{new Date(entry.date).toLocaleString()}</td>
-                  <td className="border px-2 py-1">{entry.attFibre.toLocaleString(undefined, { maximumFractionDigits: 2 })}</td>
-                  <td className="border px-2 py-1">{entry.pertesTotales.toLocaleString(undefined, { maximumFractionDigits: 2 })}</td>
-                  <td className="border px-2 py-1">{entry.bilan.toLocaleString(undefined, { maximumFractionDigits: 2 })}</td>
+              </thead>
+              <tbody>
+                {hertzienHistory.slice(0, 5).map((entry, idx) => (
+                  <tr key={idx}>
+                    <td className="border px-2 py-1">{new Date(entry.date).toLocaleString()}</td>
+                    <td className="border px-2 py-1">{entry.affaiblissement.toLocaleString(undefined, { maximumFractionDigits: 2 })}</td>
+                    <td className="border px-2 py-1">{entry.bilan.toLocaleString(undefined, { maximumFractionDigits: 2 })}</td>
+                    <td className="border px-2 py-1">{entry.marge.toLocaleString(undefined, { maximumFractionDigits: 2 })}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          )}
+        </div>
+        <hr className="my-4 border-gray-200" />
+        {/* Optique */}
+        <div className="mb-6">
+          <h4 className="text-lg font-semibold mb-2 text-purple-700">Optique</h4>
+          {optiqueHistory.length === 0 ? (
+            <div className="text-gray-500">Aucun calcul optique sauvegardé pour le moment.</div>
+          ) : (
+            <table className="min-w-full bg-white border rounded shadow text-sm mb-2">
+              <thead>
+                <tr>
+                  <th className="border px-2 py-1">Date</th>
+                  <th className="border px-2 py-1">Att. fibre (dB)</th>
+                  <th className="border px-2 py-1">Pertes totales (dB)</th>
+                  <th className="border px-2 py-1">Bilan (dBm)</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        )}
-      </div>
-      <div className="mt-10">
-        <h3 className="text-lg font-semibold mb-2">Historique des calculs UMTS</h3>
-        {umtsHistory.length === 0 ? (
-          <div className="text-gray-500">Aucun calcul UMTS sauvegardé pour le moment.</div>
-        ) : (
-          <table className="min-w-full bg-white border rounded shadow text-sm">
-            <thead>
-              <tr>
-                <th className="border px-2 py-1">Date</th>
-                <th className="border px-2 py-1">Débit total (kbps)</th>
-                <th className="border px-2 py-1">Cellules</th>
-                <th className="border px-2 py-1">NodeB</th>
-              </tr>
-            </thead>
-            <tbody>
-              {umtsHistory.slice(0, 5).map((entry, idx) => (
-                <tr key={idx}>
-                  <td className="border px-2 py-1">{new Date(entry.date).toLocaleString()}</td>
-                  <td className="border px-2 py-1">{entry.debitTotal.toLocaleString()}</td>
-                  <td className="border px-2 py-1">{entry.nbCellules}</td>
-                  <td className="border px-2 py-1">{entry.nbNodeB}</td>
+              </thead>
+              <tbody>
+                {optiqueHistory.slice(0, 5).map((entry, idx) => (
+                  <tr key={idx}>
+                    <td className="border px-2 py-1">{new Date(entry.date).toLocaleString()}</td>
+                    <td className="border px-2 py-1">{entry.attFibre.toLocaleString(undefined, { maximumFractionDigits: 2 })}</td>
+                    <td className="border px-2 py-1">{entry.pertesTotales.toLocaleString(undefined, { maximumFractionDigits: 2 })}</td>
+                    <td className="border px-2 py-1">{entry.bilan.toLocaleString(undefined, { maximumFractionDigits: 2 })}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          )}
+        </div>
+        <hr className="my-4 border-gray-200" />
+        {/* UMTS */}
+        <div>
+          <h4 className="text-lg font-semibold mb-2 text-orange-700">UMTS</h4>
+          {umtsHistory.length === 0 ? (
+            <div className="text-gray-500">Aucun calcul UMTS sauvegardé pour le moment.</div>
+          ) : (
+            <table className="min-w-full bg-white border rounded shadow text-sm mb-2">
+              <thead>
+                <tr>
+                  <th className="border px-2 py-1">Date</th>
+                  <th className="border px-2 py-1">Débit total (kbps)</th>
+                  <th className="border px-2 py-1">Cellules</th>
+                  <th className="border px-2 py-1">NodeB</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        )}
+              </thead>
+              <tbody>
+                {umtsHistory.slice(0, 5).map((entry, idx) => (
+                  <tr key={idx}>
+                    <td className="border px-2 py-1">{new Date(entry.date).toLocaleString()}</td>
+                    <td className="border px-2 py-1">{entry.debitTotal.toLocaleString()}</td>
+                    <td className="border px-2 py-1">{entry.nbCellules}</td>
+                    <td className="border px-2 py-1">{entry.nbNodeB}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          )}
+        </div>
       </div>
       <div className="flex gap-4 mb-6">
         <button
           onClick={exportAllHistories}
-          className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 shadow"
+          className="bg-primary text-white px-4 py-2 rounded-lg font-semibold shadow hover:bg-primary-dark transition-colors flex items-center gap-2 focus:outline-none focus:ring-2 focus:ring-primary-light"
         >
-          Exporter JSON
+          <span role="img" aria-label="Exporter JSON">📤</span> Exporter JSON
         </button>
         <button
           onClick={() => fileInputRef.current?.click()}
-          className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 shadow"
+          className="bg-blue-100 text-blue-800 px-4 py-2 rounded-lg font-semibold shadow hover:bg-blue-200 transition-colors flex items-center gap-2 focus:outline-none focus:ring-2 focus:ring-primary-light"
         >
-          Importer JSON
+          <span role="img" aria-label="Importer JSON">📥</span> Importer JSON
         </button>
         <button
           onClick={exportPDFReport}
-          className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 shadow"
+          className="bg-red-600 text-white px-4 py-2 rounded-lg font-semibold shadow hover:bg-red-700 transition-colors flex items-center gap-2 focus:outline-none focus:ring-2 focus:ring-red-400"
         >
-          Exporter rapport PDF
+          <span role="img" aria-label="Exporter PDF">📄</span> Exporter rapport PDF
         </button>
         <input
           type="file"

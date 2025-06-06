@@ -61,35 +61,60 @@ const GSMResults: React.FC<GSMResultsProps> = ({ area, density, trafficPerUser, 
 
   return (
     <div className="mt-8">
-      <h3 className="text-lg font-semibold mb-4">Résultats du dimensionnement GSM</h3>
-      <table className="min-w-full bg-white border rounded shadow">
-        <tbody>
-          <tr>
-            <td className="border px-4 py-2 font-medium">Nombre d'abonnés</td>
-            <td className="border px-4 py-2">{nbAbonnes.toLocaleString(undefined, { maximumFractionDigits: 0 })}</td>
-          </tr>
-          <tr>
-            <td className="border px-4 py-2 font-medium">Trafic total (Erlangs)</td>
-            <td className="border px-4 py-2">{traficTotal.toLocaleString(undefined, { maximumFractionDigits: 2 })}</td>
-          </tr>
-          <tr>
-            <td className="border px-4 py-2 font-medium">Nombre de TRX</td>
-            <td className="border px-4 py-2">{nbTRX}</td>
-          </tr>
-          <tr>
-            <td className="border px-4 py-2 font-medium">Nombre de sites BTS</td>
-            <td className="border px-4 py-2">{nbSites}</td>
-          </tr>
-        </tbody>
-      </table>
-      <button
-        onClick={() => setShowFormula((v) => !v)}
-        className="mt-3 mb-2 bg-blue-100 text-blue-800 px-3 py-1 rounded text-sm hover:bg-blue-200"
-      >
-        {showFormula ? 'Masquer la formule' : 'Voir la formule'}
-      </button>
+      <h3 className="text-xl font-bold mb-6 text-primary-dark">Résultats du dimensionnement GSM</h3>
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-8">
+        <div className="bg-blue-50 rounded-xl shadow p-5 flex flex-col items-center hover:shadow-lg transition-shadow">
+          <span className="text-3xl font-bold text-primary mb-1">{nbAbonnes.toLocaleString(undefined, { maximumFractionDigits: 0 })}</span>
+          <span className="text-gray-700 text-sm font-medium">Nombre d'abonnés</span>
+        </div>
+        <div className="bg-green-50 rounded-xl shadow p-5 flex flex-col items-center hover:shadow-lg transition-shadow">
+          <span className="text-3xl font-bold text-green-700 mb-1">{traficTotal.toLocaleString(undefined, { maximumFractionDigits: 2 })}</span>
+          <span className="text-gray-700 text-sm font-medium">Trafic total (Erlangs)</span>
+        </div>
+        <div className="bg-yellow-50 rounded-xl shadow p-5 flex flex-col items-center hover:shadow-lg transition-shadow">
+          <span className="text-3xl font-bold text-yellow-600 mb-1">{nbTRX}</span>
+          <span className="text-gray-700 text-sm font-medium">Nombre de TRX</span>
+        </div>
+        <div className="bg-purple-50 rounded-xl shadow p-5 flex flex-col items-center hover:shadow-lg transition-shadow">
+          <span className="text-3xl font-bold text-purple-700 mb-1">{nbSites}</span>
+          <span className="text-gray-700 text-sm font-medium">Nombre de sites BTS</span>
+        </div>
+      </div>
+      <div className="bg-white rounded-xl shadow p-6 mb-8">
+        <h4 className="font-semibold mb-2 text-primary-dark">Graphique : Nombre de sites BTS par zone</h4>
+        <ResponsiveContainer width="100%" height={220}>
+          <BarChart data={chartData} margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
+            <CartesianGrid strokeDasharray="3 3" />
+            <XAxis dataKey="name" />
+            <YAxis allowDecimals={false} />
+            <Tooltip />
+            <Bar dataKey="value" fill="#2563eb" radius={[4, 4, 0, 0]} />
+          </BarChart>
+        </ResponsiveContainer>
+      </div>
+      <div className="flex flex-wrap gap-3 mb-6">
+        <button
+          onClick={() => setShowFormula((v) => !v)}
+          className="bg-blue-100 text-blue-800 px-4 py-2 rounded-lg text-sm font-semibold hover:bg-blue-200 transition-colors flex items-center gap-2 focus:outline-none focus:ring-2 focus:ring-primary-light"
+        >
+          <span role="img" aria-label="Formule">🧮</span>
+          {showFormula ? 'Masquer la formule' : 'Voir la formule'}
+        </button>
+        <button
+          onClick={handleExportPDF}
+          className="bg-green-600 text-white px-4 py-2 rounded-lg font-semibold hover:bg-green-700 transition-colors flex items-center gap-2 focus:outline-none focus:ring-2 focus:ring-green-400"
+        >
+          <span role="img" aria-label="PDF">📄</span> Exporter en PDF
+        </button>
+        <button
+          onClick={handleSave}
+          className="bg-primary text-white px-4 py-2 rounded-lg font-semibold hover:bg-primary-dark transition-colors flex items-center gap-2 focus:outline-none focus:ring-2 focus:ring-primary-light"
+        >
+          <span role="img" aria-label="Sauvegarder">💾</span> Sauvegarder
+        </button>
+      </div>
       {showFormula && (
-        <div className="mb-4 p-3 bg-blue-50 border-l-4 border-blue-400 rounded text-sm">
+        <div className="mb-4 p-4 bg-blue-50 border-l-4 border-blue-400 rounded-xl shadow text-sm">
           <b>Formule du nombre d'abonnés :</b><br/>
           <span className="font-mono">N = S × D × (P / 100)</span><br/>
           où <b>N</b> = nombre d'abonnés, <b>S</b> = superficie (km²), <b>D</b> = densité (hab/km²), <b>P</b> = taux de pénétration (%)<br/><br/>
@@ -106,34 +131,10 @@ const GSMResults: React.FC<GSMResultsProps> = ({ area, density, trafficPerUser, 
           <a href="#" className="text-blue-700 underline" target="_blank" rel="noopener">Voir le cours : Dimensionnement GSM</a>
         </div>
       )}
-      <div className="text-xs text-gray-500 mt-2">
+      <div className="text-xs text-gray-500 mt-2 bg-gray-50 rounded-xl shadow p-4">
         <div>Capacité TRX utilisée : {CAPACITE_TRX} Erlangs</div>
         <div>Couverture par site utilisée : {COUVERTURE_PAR_SITE} km²</div>
       </div>
-      <div className="mt-8">
-        <h4 className="font-semibold mb-2">Graphique : Nombre de sites BTS par zone</h4>
-        <ResponsiveContainer width="100%" height={220}>
-          <BarChart data={chartData} margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
-            <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="name" />
-            <YAxis allowDecimals={false} />
-            <Tooltip />
-            <Bar dataKey="value" fill="#2563eb" radius={[4, 4, 0, 0]} />
-          </BarChart>
-        </ResponsiveContainer>
-      </div>
-      <button
-        onClick={handleExportPDF}
-        className="mt-4 bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700"
-      >
-        Exporter en PDF
-      </button>
-      <button
-        onClick={handleSave}
-        className="mt-4 bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 ml-2"
-      >
-        Sauvegarder
-      </button>
     </div>
   );
 };

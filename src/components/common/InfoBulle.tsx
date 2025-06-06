@@ -33,7 +33,7 @@ const InfoBulle: React.FC<InfoBulleProps> = ({ content, className, glossaireId, 
         </button>
       )}
       {show && (
-        <div className="absolute z-10 left-1/2 -translate-x-1/2 mt-2 w-64 bg-white border border-blue-300 rounded shadow-lg p-3 text-xs text-gray-800">
+        <div className="absolute z-10 left-1/2 -translate-x-1/2 mt-2 w-64 bg-white border border-blue-300 rounded shadow-lg p-3 text-xs text-gray-800 transition-opacity duration-200 opacity-100">
           {content}
         </div>
       )}
