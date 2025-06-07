@@ -1,35 +1,25 @@
+import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import Layout from './components/common/Layout';
-import GSMForm from './components/gsm/GSMForm';
-import HertzienForm from './components/hertzien/HertzienForm';
-import OptiqueForm from './components/optique/OptiqueForm';
-import UMTSForm from './components/umts/UMTSForm';
-import Dashboard from './components/dashboard/Dashboard';
-import Simulation from './components/simulation/Simulation';
-import './App.css';
+import Navbar from '@/components/common/Navbar';
+import Home from '@/pages/Home';
+import Simulation from '@/pages/Simulation';
+import Documentation from '@/pages/Documentation';
 
-const DashboardPage = () => <Dashboard />;
-const GSM = () => <GSMForm />;
-const UMTS = () => <UMTSForm />;
-const Hertzien = () => <HertzienForm />;
-const Optique = () => <OptiqueForm />;
-
-function App() {
+const App: React.FC = () => {
   return (
     <Router>
-      <Layout>
-        <Routes>
-          <Route path="/" element={<DashboardPage />} />
-          <Route path="/dashboard" element={<DashboardPage />} />
-          <Route path="/gsm" element={<GSM />} />
-          <Route path="/umts" element={<UMTS />} />
-          <Route path="/hertzien" element={<Hertzien />} />
-          <Route path="/optique" element={<Optique />} />
-          <Route path="/simulation" element={<Simulation />} />
-        </Routes>
-      </Layout>
+      <div className="min-h-screen bg-gray-100">
+        <Navbar />
+        <main className="container mx-auto px-4 py-8">
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/simulation/*" element={<Simulation />} />
+            <Route path="/documentation" element={<Documentation />} />
+          </Routes>
+        </main>
+      </div>
     </Router>
   );
-}
+};
 
 export default App;
