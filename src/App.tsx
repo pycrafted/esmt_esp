@@ -8,6 +8,9 @@ import GSMPage from './pages/GSMPage';
 import HertzienPage from './pages/HertzienPage';
 import OptiquePage from './pages/OptiquePage';
 import UMTSPage from './pages/UMTSPage';
+import HertzienForm from './components/hertzien/HertzienForm';
+import Dashboard from './components/dashboard/Dashboard';
+import OptiqueForm from './components/optique/OptiqueForm';
 
 
 const App: React.FC = () => {
@@ -56,12 +59,12 @@ const App: React.FC = () => {
           {/* Contenu principal */}
           <div className="flex-1 overflow-y-auto">
             <Routes>
-              <Route path="/" element={<DashboardPage />} />
-              <Route path="/dashboard" element={<DashboardPage />} />
+              <Route path="/" element={<Dashboard />} />
+              <Route path="/dashboard" element={<Dashboard />} />
               <Route path="/gsm" element={<GSMPage />} />
               <Route path="/umts" element={<UMTSPage />} />
-              <Route path="/hertzien" element={<HertzienPage />} />
-              <Route path="/optique" element={<OptiquePage />} />
+              <Route path="/hertzien" element={<HertzienForm />} />
+              <Route path="/optique" element={<OptiqueForm />} />
               <Route path="/simulation/*" element={<Simulation />} />
               <Route path="/documentation" element={<Documentation />} />
             </Routes>
