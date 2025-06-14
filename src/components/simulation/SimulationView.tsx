@@ -9,8 +9,7 @@ import Antenna from './Antenna';
 import FresnelZone from './FresnelZone';
 import Obstacle from './Obstacle';
 import SimulationControls from './SimulationControls';
-import InfoBulle from '../common/InfoBulle';
-import Glossaire from '../common/Glossaire';
+import SimulationVisualization from './SimulationVisualization';
 
 interface ObstacleData {
   id: string;
@@ -34,71 +33,12 @@ interface DiffractionLosses {
   obstacles: Array<{ loss: number }>;
 }
 
-interface SimulationFormValues {
-  area: string;
-  users: string;
-  userRate: string;
-}
 
-const initialValues: SimulationFormValues = {
-  area: '',
-  users: '',
-  userRate: '',
-};
-
-const pedagogicHelp = {
-  area: {
-    short: "Zone à couvrir (en km²).",
-    example: "Ex : 10 km² (petite ville), 50 km² (zone rurale)",
-    why: "Permet de calculer la couverture nécessaire et le nombre de sites."
-  },
-  users: {
-    short: "Nombre d'utilisateurs à desservir.",
-    example: "Ex : 2000 (petite zone), 10000 (grande ville)",
-    why: "Permet de dimensionner la capacité du réseau."
-  },
-  userRate: {
-    short: "Débit voix par utilisateur (en kbps).",
-    example: "Ex : 12.2 kbps (standard)",
-    why: "Le débit par utilisateur impacte la bande passante nécessaire."
-  }
-};
-
-const exampleValues: SimulationFormValues = {
-  area: '10',
-  users: '2000',
-  userRate: '12.2',
-};
-
-const scenarioPresets: { [key: string]: { values: SimulationFormValues; msg: string } } = {
-  urbain: {
-    values: { area: '10', users: '2000', userRate: '12.2' },
-    msg: "Scénario urbain : zone de 10 km², 2000 utilisateurs, débit standard."
-  },
-  rural: {
-    values: { area: '50', users: '500', userRate: '8' },
-    msg: "Scénario rural : grande zone (50 km²), peu d'utilisateurs, débit réduit."
-  },
-  campus: {
-    values: { area: '2', users: '1000', userRate: '16' },
-    msg: "Scénario campus : petite zone dense avec besoins élevés."
-  }
-};
-
-// Liste de termes pour le glossaire
-const termesSimulation = [
-  { id: 'area', terme: 'Zone à couvrir', definition: "Surface géographique où le service doit être disponible.", unite: 'km²', exemple: 'Une ville de taille moyenne fait environ 50 km².' },
-  { id: 'users', terme: 'Utilisateurs', definition: "Nombre total d'utilisateurs à desservir dans la zone.", exemple: '2000 utilisateurs dans une petite ville.' },
-  { id: 'userRate', terme: 'Débit par utilisateur', definition: "Bande passante allouée à chaque utilisateur.", unite: 'kbps', exemple: '12.2 kbps pour la voix standard.' },
-];
-
-const SimulationView: React.FC = () => {
+const SimulationView: React.FC<{isActive: boolean}> = ({isActive}) => {
   const { antennas, frequency } = useSimulationStore();
   const [linkBudget, setLinkBudget] = useState<LinkBudgetResult | null>(null);
   const [obstacles, setObstacles] = useState<ObstacleData[]>([]);
   const [diffractionLosses, setDiffractionLosses] = useState<DiffractionLosses>({ total: 0, obstacles: [] });
-
-  // Calcul de la distance entre les antennes
   const distance = useMemo(() => {
     if (antennas.length !== 2) return 0;
     const [ant1, ant2] = antennas;
@@ -164,8 +104,7 @@ const SimulationView: React.FC = () => {
     <div className="flex h-full">
       {/* Panneau de contrôle */}
       <div className="w-1/4 p-4 bg-gray-100 overflow-y-auto">
-        <SimulationControls />
-        
+        {isActive ? <SimulationVisualization setObstacles={setObstacles} /> : <SimulationControls />}
         {linkBudget && (
           <div className="mt-4 p-4 bg-white rounded-lg shadow">
             <h3 className="text-lg font-semibold mb-2">Bilan de Liaison</h3>

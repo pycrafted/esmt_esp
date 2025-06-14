@@ -1,5 +1,5 @@
 import React from 'react';
-import SimulationView from './SimulationView';
+import SimulationView from './AddObstacle';
 
 const Simulation: React.FC = () => {
   return (
